@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="manifest.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="Assets\*" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MacroDeck.Plugin.Hosting" />
+      <PackageReference Include="MacroDeck.Plugin.Serilog" />
+      <PackageReference Include="MacroDeck.Sdk" />
+    </ItemGroup>
+    
+</Project>

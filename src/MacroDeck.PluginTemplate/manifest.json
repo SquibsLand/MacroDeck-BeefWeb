@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.macro-deck.app/plugin-manifest-v1.schema.json",
+  "manifestVersion": 1,
+  "id": "app.macro-deck.template",
+  "name": "PluginTemplate",
+  "version": "1.0.0",
+  "description": "A template for creating Macro Deck plugins.",
+  "icon": "Assets/icon.svg",
+  "entrypoints": {
+    "win-x64": { "executable": "MacroDeck.PluginTemplate.exe" },
+    "osx-arm64": { "executable": "MacroDeck.PluginTemplate" },
+    "linux-x64": { "executable": "MacroDeck.PluginTemplate" }
+  }
+}
