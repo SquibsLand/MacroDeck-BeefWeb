@@ -1,14 +1,14 @@
 {
   "$schema": "https://schemas.macro-deck.app/plugin-manifest-v1.schema.json",
   "manifestVersion": 1,
-  "id": "app.macro-deck.template",
-  "name": "PluginTemplate",
+  "id": "app.macro-deck.beefweb",
+  "name": "BeefWeb",
   "version": "1.0.0",
-  "description": "A template for creating Macro Deck plugins.",
+  "description": "Connect MacroDeck with your Foobar2000",
   "icon": "Assets/icon.svg",
   "entrypoints": {
-    "win-x64": { "executable": "MacroDeck.PluginTemplate.exe" },
-    "osx-arm64": { "executable": "MacroDeck.PluginTemplate" },
-    "linux-x64": { "executable": "MacroDeck.PluginTemplate" }
+    "win-x64": { "executable": "MacroDeck.BeefWeb.exe" },
+    "osx-arm64": { "executable": "MacroDeck.BeefWeb" },
+    "linux-x64": { "executable": "MacroDeck.BeefWeb" }
   }
 }
