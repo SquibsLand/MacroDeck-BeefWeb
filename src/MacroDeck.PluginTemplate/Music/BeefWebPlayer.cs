@@ -1,9 +1,11 @@
-﻿using MacroDeck.Sdk.Logging;
+﻿using MacroDeck.BeefWeb.Music.API;
+using MacroDeck.BeefWeb.Music.API.Responses;
+using MacroDeck.Sdk.Logging;
 using MacroDeck.Sdk.MusicPlayer;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Serilog;
 
 namespace MacroDeck.BeefWeb.Music
 {
@@ -13,20 +15,56 @@ namespace MacroDeck.BeefWeb.Music
         IntegrationLog.For<BeefWebPlayer>(BeefWebIntergration.IntegrationId);
         public MusicPlayerState LastState { get; private set; } = MusicPlayerState.Disconnected;
 
-        public Task<MusicPlayerArtwork?> GetArtworkAsync(string artworkId, CancellationToken cancellationToken = default)
+        public BeefWebClient? client { get; private set; }
+
+        public void init(string serverAddress,
+            int serverPort,
+            PlayerType playerType,
+            string username = default!,
+            string password = default!)
         {
-            throw new NotImplementedException();
+            client = new BeefWebClient(serverAddress, serverPort, playerType, username, password);  
+        }
+
+        private MusicPlayerState IsUnavailable = new()
+        {
+            IsUnavailable = true
+        };
+        public async Task<MusicPlayerArtwork?> GetArtworkAsync(string artworkId, CancellationToken cancellationToken = default)
+        {
+            _logger.Error("Getting Artwork");
+            if (client is null)
+            {
+                _logger.Warning("Client is not ready, skipping getting arwork");
+                return null;
+            }
+            try
+            {
+                MusicPlayerArtwork? artwork = await client.GetArtwork();
+                _logger.Debug(artwork?.Data.ToString());
+                if (artwork is null)
+                {
+                    _logger.Debug("Artwork not found, yet the client is working. Artwork is likely missing");
+                    return null;
+                } else return artwork;
+            } catch (Exception e)
+            {
+                _logger.Error("Artwork failed to get. Check connection to player");
+                _logger.Debug(e.Message);
+                return null;
+            }
         }
 
         public async Task<MusicPlayerState> GetStateAsync(CancellationToken cancellationToken = default)
         {
-       
-
-            return new MusicPlayerState
-            {
-                IsConnected = true,
-                TrackName = "Example",
-            };
+            _logger.Warning($"Client is {client != null}");
+            if (client == null) return IsUnavailable;
+            else {
+                Player? player = await client.GetPlayer();
+                _logger.Warning($"Player is {player!= null}");
+                if (player == null) return IsUnavailable;
+                else return player.ToMusicPlayerState();
+            }
         }
 
         public Task NextAsync(CancellationToken cancellationToken = default)

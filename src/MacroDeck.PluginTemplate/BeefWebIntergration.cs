@@ -14,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System.Runtime.CompilerServices;
 using ILogger = Serilog.ILogger;
+using MacroDeck.BeefWeb.Music.API;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MacroDeck.BeefWeb;
 
@@ -56,12 +58,31 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
 
 	public async Task InitializeAsync(IIntegrationContext context)
 	{
+		
 		_context = context;
 
 		// A real integration reads its config entries here, after the user has been through the flow
 		// below - the same division of labor as SpotifyIntegration.ConnectFromConfig. The sample keeps
 		// to a single entry: the location name typed into the config flow's one field.
 		var entries = await context.Config.GetEntriesAsync();
+		_logger.Error($"{entries[0].Title}");
+        if (entries.Count > 0)
+		{
+			
+            var address = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.ServerFieldName);
+            string? portString = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.PortFieldName);
+            var type = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.PlayerTypeFieldName);
+
+			if(!string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(portString) && !string.IsNullOrWhiteSpace(type))
+			{
+				Player.init(address, int.Parse(portString), PlayerType.FOOBAR);
+			} else
+			{
+				IsInitialized = false;
+                _logger.Error($"Beefweb failed to init");
+            }
+
+		}
 		
 		IsInitialized = true;
 	
