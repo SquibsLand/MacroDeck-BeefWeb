@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using MacroDeck.BeefWeb.Music.API;
+using MacroDeck.BeefWeb.Music.API.Posts.Player;
 using MacroDeck.BeefWeb.Music.API.Responses;
 using MacroDeck.Sdk.MusicPlayer;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,8 @@ namespace MacroDeck.BeefWeb.Music
         public string? Username { get; }
         public string? Password { get; }
 
+        public BeefWebCommands Commands { get; }
+
         private readonly HttpClient sharedClient;
         public BeefWebClient(
             string serverAddress,
@@ -33,7 +36,7 @@ namespace MacroDeck.BeefWeb.Music
             this.Username = username;
             this.Password = password;
             this.sharedClient = new HttpClient{ BaseAddress = new Uri($"http://{ServerAddress}:{ServerPort}/api/") };
-
+            this.Commands = new BeefWebCommands(this, this.sharedClient);
         }
         public async Task<MusicPlayerArtwork?> GetArtwork()
         {
@@ -47,5 +50,55 @@ namespace MacroDeck.BeefWeb.Music
 
         }
         public async Task<Player?> GetPlayer() => await PlayerRoot.Fetch(sharedClient);
+
+        internal class BeefWebCommands(BeefWebClient ctx, HttpClient client)
+        {
+            private readonly BeefWebClient _ctx = ctx;
+            private readonly HttpClient _client = client;
+
+            public async Task Next()
+            {
+                await NextSong.Post(_client);
+            }
+            public async Task Pause()
+            {
+                await PauseSong.Post(_client);
+            }
+            public async Task Play()
+            {
+                await PlaySong.Post(_client);
+            }
+            public async Task PlayItem()
+            {
+                throw new NotImplementedException();
+            }
+            public async Task Previous()
+            {
+                await PreviousSong.Post(_client);
+            }
+            public async Task Seek()
+            {
+                throw new NotImplementedException();
+            }
+            public async Task SetRepeatMode()
+            {
+                throw new NotImplementedException();
+            }
+            public async Task SetShuffle()
+            {
+                throw new NotImplementedException();
+            }
+            public async Task SetVolume(float volume) 
+            {
+                throw new NotImplementedException("Volume conversion has not been done");
+                //await SetCurrentVolume.Post(_client, volume);
+            }
+            public async Task TogglePlayPause()
+            {
+                await PausePlay.Post(_client);
+            }
+
+        }
     }
+    
 }

@@ -16,7 +16,7 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
 {
     enum VolumeType { db, linear, upDown }
     enum LocalPlaybackState { stopped, playing, paused }
-    internal class PlayerRoot : BeefWebAPICall<PlayerRoot, Player>, IApiResource<PlayerRoot>
+    internal class PlayerRoot : BeefWebAPICall<PlayerRoot, Player>, IApiResource<Player>
     {
         public static string ApiPath => "player";
 

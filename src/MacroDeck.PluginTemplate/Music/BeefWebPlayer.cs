@@ -67,20 +67,22 @@ namespace MacroDeck.BeefWeb.Music
             }
         }
 
-        public Task NextAsync(CancellationToken cancellationToken = default)
+        public async Task NextAsync(CancellationToken cancellationToken = default)
         {
-            _logger.Debug("Next Command");
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.Next();
         }
 
-        public Task PauseAsync(CancellationToken cancellationToken = default)
+        public async Task PauseAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.Pause();
         }
 
-        public Task PlayAsync(CancellationToken cancellationToken = default)
+        public async Task PlayAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.Play();
         }
 
         public Task PlayItemAsync(MusicPlayerCatalogItem item, CancellationToken cancellationToken = default)
@@ -88,9 +90,10 @@ namespace MacroDeck.BeefWeb.Music
             throw new NotImplementedException();
         }
 
-        public Task PreviousAsync(CancellationToken cancellationToken = default)
+        public async Task PreviousAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.Previous();
         }
 
         public Task SeekAsync(TimeSpan position, CancellationToken cancellationToken = default)
@@ -108,14 +111,16 @@ namespace MacroDeck.BeefWeb.Music
             throw new NotImplementedException();
         }
 
-        public Task SetVolumeAsync(int volumePercent, CancellationToken cancellationToken = default)
+        public async Task SetVolumeAsync(int volumePercent, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.SetVolume(volumePercent);
         }
 
-        public Task TogglePlayPauseAsync(CancellationToken cancellationToken = default)
+        public async Task TogglePlayPauseAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.TogglePlayPause();
         }
     }
 }
