@@ -3,6 +3,7 @@
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
     <File Path="README.md" />
+    <File Path="TODO.md" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/MacroDeck.PluginTemplate/MacroDeck.BeefWeb.csproj" />
