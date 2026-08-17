@@ -71,6 +71,11 @@ namespace MacroDeck.BeefWeb.Music.API.Posts.Player
         public static async Task Post(HttpClient client, float position) => await Post(client, new PlayerRequest { position = position });
     }
 
+    internal class SeekRelativePlayback : SetPlayer<SeekRelativePlayback>
+    {
+        public static async Task Post(HttpClient client, float position) => await Post(client, new PlayerRequest { relativePosition = position });
+    }
+
     // TODO: Set Repeat Mode
 
     internal class SetCurrentRepeatMode : SetPlayer<SetCurrentRepeatMode>

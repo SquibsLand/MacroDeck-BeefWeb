@@ -102,6 +102,11 @@ namespace MacroDeck.BeefWeb.Music
             await client.Commands.Seek(position.Seconds);
         }
 
+        public async Task SeekRelativeAsync(TimeSpan position, CancellationToken cancellationToken = default)
+        {
+            if (client is null) return;
+            await client.Commands.SeekRelative(position.Seconds);
+        }
         public Task SetRepeatModeAsync(RepeatMode mode, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();

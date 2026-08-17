@@ -40,7 +40,7 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
 		_catalogNotifier = catalogNotifier;
 		_icon = LoadIcon(metadata, environment);
 		Player = new BeefWebPlayer();
-        Actions = [..MusicPlayerActions.Common(ResolvePlayer, GetInstances)];
+        Actions = new BeefWebActions(this, ResolvePlayer, GetInstances).Get();
 	}
 
     public const string IntegrationId = "app.macro-deck.beefweb";
@@ -118,11 +118,12 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
 	[
 	
 	];
+    internal IReadOnlyList<ActionParameterOption> InstanceOptions()
+        => [.. GetInstances().Select(instance => new ActionParameterOption { Value = instance.Id, Label = instance.DisplayName })];
 
-	
-	// ----- IConfigFlowProvider -----
+    // ----- IConfigFlowProvider -----
 
-	public IConfigFlow CreateConfigFlow() => new BeefWebConfigFlow();
+    public IConfigFlow CreateConfigFlow() => new BeefWebConfigFlow();
 
 	public bool AllowsMultipleConfigurations => false;
 

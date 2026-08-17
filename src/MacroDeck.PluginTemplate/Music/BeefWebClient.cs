@@ -79,6 +79,10 @@ namespace MacroDeck.BeefWeb.Music
             {
                 await SeekPlayback.Post(_client, seconds);
             }
+            public async Task SeekRelative(float seconds)
+            {
+                await SeekRelativePlayback.Post(_client, seconds);
+            }
             public async Task SetRepeatMode(RepeatMode mode)
             {
                 throw new NotImplementedException();

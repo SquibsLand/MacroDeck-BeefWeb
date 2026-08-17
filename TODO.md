@@ -23,7 +23,7 @@ Extension of IMusicPlayer
 - [ ] Refresh
 - [ ] Add to Playback Queue
 - [ ] Stop after next track
-- [ ] Seek Relative
+- [X] Seek Relative
 - [ ] Volume Relative
 - [ ] Get Custom Value
 
