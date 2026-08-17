@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MacroDeck.BeefWeb.Music
 {
-
     internal class BeefWebClient : IBeefWebAPI
     {
         public PlayerType PlayerType { get; }
@@ -76,13 +75,16 @@ namespace MacroDeck.BeefWeb.Music
             {
                 await PreviousSong.Post(_client);
             }
-            public async Task Seek()
+            public async Task Seek(float seconds)
             {
-                throw new NotImplementedException();
+                await SeekPlayback.Post(_client, seconds);
             }
-            public async Task SetRepeatMode()
+            public async Task SetRepeatMode(RepeatMode mode)
             {
                 throw new NotImplementedException();
+                //Player? player = await _ctx.GetPlayer();
+                //if (player is null) return;
+                //await SetCurrentRepeatMode.Post(player, _client, mode);
             }
             public async Task SetShuffle()
             {

@@ -1,4 +1,4 @@
-﻿using MacroDeck.BeefWeb.Music.API;
+using MacroDeck.BeefWeb.Music.API;
 using MacroDeck.BeefWeb.Music.API.Responses;
 using MacroDeck.Sdk.Logging;
 using MacroDeck.Sdk.MusicPlayer;
@@ -96,9 +96,10 @@ namespace MacroDeck.BeefWeb.Music
             await client.Commands.Previous();
         }
 
-        public Task SeekAsync(TimeSpan position, CancellationToken cancellationToken = default)
+        public async Task SeekAsync(TimeSpan position, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.Seek(position.Seconds);
         }
 
         public Task SetRepeatModeAsync(RepeatMode mode, CancellationToken cancellationToken = default)

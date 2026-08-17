@@ -69,26 +69,35 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
 
             };
         }
-        public void OnDeserialized()
+
+        public int? FindPlaybackMode(RepeatMode newMode)
         {
-            Enum.TryParse(rawPlaybackState, true, out LocalPlaybackState value);
+            if(playbackModes is null || playbackModes.Length == 0) return null;
+            string[] knownEquivelents;
 
-            playbackState = value switch
+            switch(newMode)
             {
-                LocalPlaybackState.stopped => PlaybackState.Stopped,
-                LocalPlaybackState.paused => PlaybackState.Paused,
-                LocalPlaybackState.playing => PlaybackState.Playing,
-                _ => throw new NotImplementedException(),
-            };
-
-            if (playbackModes is null || playbackModes.Length <= 0) {}
-            else
-            {
-                RepeatMode = GetRepeatMode(playbackMode, playbackModes);
-                ShuffleEnabled = GetShuffleEnabled(playbackMode, playbackModes);
-
+                case RepeatMode.Off:
+                    knownEquivelents = ["default", "none", "off"];
+                    break;
+                case RepeatMode.Track:
+                    knownEquivelents = ["repeat (track)", "track"];
+                    break;
+                case RepeatMode.Context:
+                    knownEquivelents = ["repeat (playlist)", "playlist"];
+                    break;
+                default:
+                    return null;
             }
+            for(int i=0; i<playbackModes.Length; i++) 
+            {
+                string mode = playbackModes[i].ToLowerInvariant();
+                if (knownEquivelents.Contains(mode)) return i;
+                continue;
+            }
+            return null;
         }
+
         private static RepeatMode GetRepeatMode(int index, string[] modes, StringComparison comp = StringComparison.OrdinalIgnoreCase)
         {
             
@@ -113,6 +122,26 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
         private static bool GetShuffleEnabled(int index, string[] modes,
                                               StringComparison comp = StringComparison.OrdinalIgnoreCase) 
             => modes[index].Contains("repeat") || modes[index].Contains("shuffle");
+        public void OnDeserialized()
+        {
+            Enum.TryParse(rawPlaybackState, true, out LocalPlaybackState value);
+
+            playbackState = value switch
+            {
+                LocalPlaybackState.stopped => PlaybackState.Stopped,
+                LocalPlaybackState.paused => PlaybackState.Paused,
+                LocalPlaybackState.playing => PlaybackState.Playing,
+                _ => throw new NotImplementedException(),
+            };
+
+            if (playbackModes is null || playbackModes.Length <= 0) { }
+            else
+            {
+                RepeatMode = GetRepeatMode(playbackMode, playbackModes);
+                ShuffleEnabled = GetShuffleEnabled(playbackMode, playbackModes);
+
+            }
+        }
     }
 
     internal class PlayerInfo

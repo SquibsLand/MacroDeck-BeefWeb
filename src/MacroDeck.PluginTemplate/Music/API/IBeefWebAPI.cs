@@ -33,7 +33,7 @@ namespace MacroDeck.BeefWeb.Music.API
         int ServerPort { get; }
         string? Username { get; }
         string? Password { get; }
-        Task<Player> GetPlayer();
+        Task<Player?> GetPlayer();
     }
     public interface IApiResource<TChild>
     {
