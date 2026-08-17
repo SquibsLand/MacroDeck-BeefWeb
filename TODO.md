@@ -16,7 +16,7 @@ Extension of IMusicPlayer
 	- Current attempts have failed, it is unknown how to do this with the current API
 - [!] SetShuffleAsync
 	- See Above	
-- [!] SetVolumeAsync
+- [X] SetVolumeAsync
 - [X] TogglePlayPauseAsync
 
 ## Custom Actions (0/5)

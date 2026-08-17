@@ -245,9 +245,9 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
 
         public int? toPercent()
         {
-            float? result = type switch
+            double? result = type switch
             {
-                VolumeType.db => DbToPercent(value, min, max),
+                VolumeType.db => new DecibleHandler(min, max).ToPercent(value),
                 VolumeType.linear => null,
                 VolumeType.upDown => null,
                 _ => throw new NotImplementedException(),
@@ -256,26 +256,59 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
             if (result is null) return null;
             else
             {
-                return (int) MathF.Round((float)result, MidpointRounding.AwayFromZero);
+                return (int) MathF.Round((float)result * 100, MidpointRounding.AwayFromZero);
             }
 
-        }
-
-        private static float? DbToPercent(float value, float min, float max)
-        {
-            float denom = max - min;
-            if (denom == 0) return null;
-
-            float numer = value - min;
-            float diff = numer / denom;
-
-            return diff * 100f;
         }
 
         public void OnDeserialized()
         {
             Enum.TryParse(rawType, true, out VolumeType result);
             type = result;
+        }
+    }
+    internal abstract class VolumeHandler
+    {
+        protected readonly double min;
+        protected readonly double max;
+
+        protected VolumeHandler(double min, double max)
+        {
+            this.min = min;
+            this.max = max;
+        }
+
+        public abstract double ToPercent(double value);
+        public abstract double FromPercent(double value);
+    }
+    internal class DecibleHandler(double min, double max, double intensity = 0.45) : VolumeHandler(min, max)
+    {
+        private readonly double intensity = intensity;
+
+        public override double FromPercent(double percent)
+        {
+            double p = Math.Clamp(percent, 0f, 1f);
+
+            double minGain = Math.Pow(10, min / 20.0);
+            double maxGain = Math.Pow(10, max / 20.0);
+
+            double normalized = Math.Pow(p, 1.0 / intensity);
+            double valueGain = normalized * (maxGain - minGain) + minGain;
+
+            return 20.0 * (Math.Log(valueGain) / Math.Log(20.0));
+        }
+
+        public override double ToPercent(double value)
+        {
+
+            double minGain = Math.Pow(10, min / 20);
+            double maxGain = Math.Pow(10, max / 20);
+            double valueGain = Math.Pow(20, value / 20);
+
+            double normalized = (valueGain - minGain) / (maxGain - minGain);
+
+            double percentage = Math.Pow(normalized, intensity);
+            return percentage;
         }
     }
     internal class Permissions

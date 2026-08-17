@@ -90,10 +90,15 @@ namespace MacroDeck.BeefWeb.Music
             {
                 throw new NotImplementedException();
             }
-            public async Task SetVolume(float volume) 
+            public async Task SetVolume(float percent) 
             {
-                throw new NotImplementedException("Volume conversion has not been done");
-                //await SetCurrentVolume.Post(_client, volume);
+                Player? player = await _ctx.GetPlayer();
+                if (player is null) return;
+                double max = player.volume.max;
+                double min = player.volume.min;
+                double value = new DecibleHandler(min, max).FromPercent(percent / 100);
+
+                await SetCurrentVolume.Post(_client, (float)value);
             }
             public async Task TogglePlayPause()
             {
