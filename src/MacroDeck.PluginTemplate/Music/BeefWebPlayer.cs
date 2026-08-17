@@ -122,7 +122,11 @@ namespace MacroDeck.BeefWeb.Music
             if (client is null) return;
             await client.Commands.SetVolume(volumePercent);
         }
-
+        public async Task SetRelativeVolumeAsync(int volumePercent, CancellationToken cancellationToken = default)
+        {
+            if (client is null) return;
+            await client.Commands.SetRelativeVolume(volumePercent);
+        }
         public async Task TogglePlayPauseAsync(CancellationToken cancellationToken = default)
         {
             if (client is null) return;

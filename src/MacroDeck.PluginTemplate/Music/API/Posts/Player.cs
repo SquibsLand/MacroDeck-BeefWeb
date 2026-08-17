@@ -110,6 +110,7 @@ namespace MacroDeck.BeefWeb.Music.API.Posts.Player
     {
         public static async Task Post(HttpClient client, float volume) => await Post(client, new PlayerRequest { volume = volume });
     }
+   
     internal class PausePlay : BeefWebAPISend<PausePlay>, IApiResource
     {
         public static string ApiPath => "player/play-pause";

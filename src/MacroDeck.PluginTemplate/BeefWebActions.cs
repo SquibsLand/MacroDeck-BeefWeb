@@ -24,6 +24,7 @@ namespace MacroDeck.BeefWeb
         }
 
         public IReadOnlyList<IActionDefinition> Common() => MusicPlayerActions.Common(resolver, getInstances);
-        public IReadOnlyList<IActionDefinition> Custom() => [new SeekRelativeAction(intergration)];
+        public IReadOnlyList<IActionDefinition> Custom() => [new SeekRelativeAction(intergration), new SetVolumeRelativeAction(intergration)];
+
     }
 }

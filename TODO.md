@@ -24,7 +24,8 @@ Extension of IMusicPlayer
 - [ ] Add to Playback Queue
 - [ ] Stop after next track
 - [X] Seek Relative
-- [ ] Volume Relative
+- [X] Volume Relative
+	- Due to the conversion from DB to Percent, volume relative is calculated locally and not by beefweb.
 - [ ] Get Custom Value
 
 ## Varriables

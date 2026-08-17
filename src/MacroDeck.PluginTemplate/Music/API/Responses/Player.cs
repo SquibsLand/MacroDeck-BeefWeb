@@ -60,7 +60,7 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
                 PlaybackState = playbackState,
                 Position = activeItem.position,
                 Duration = activeItem.duration,
-                VolumePercent = volume.toPercent(),
+                VolumePercent = (int) MathF.Round(volume.toPercent()),
                 DeviceName = info.name,
                 DeviceType = $"{info.version} ({info.pluginVersion})",
                 RepeatMode = RepeatMode,
@@ -243,21 +243,18 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
         public VolumeType type { get; private set; }
         public float value { get; init; }
 
-        public int? toPercent()
+        public float toPercent()
         {
-            double? result = type switch
+            double result = type switch
             {
                 VolumeType.db => new DecibleHandler(min, max).ToPercent(value),
-                VolumeType.linear => null,
-                VolumeType.upDown => null,
+                VolumeType.linear => throw new NotImplementedException(),
+                VolumeType.upDown => throw new NotImplementedException(),
                 _ => throw new NotImplementedException(),
             };
 
-            if (result is null) return null;
-            else
-            {
-                return (int) MathF.Round((float)result * 100, MidpointRounding.AwayFromZero);
-            }
+             return MathF.Round((float)result * 100, MidpointRounding.AwayFromZero);
+  
 
         }
 
@@ -287,7 +284,7 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
 
         public override double FromPercent(double percent)
         {
-            double p = Math.Clamp(percent, 0f, 1f);
+            double p = NormalizeToPercent(percent);
 
             double minGain = Math.Pow(10, min / 20.0);
             double maxGain = Math.Pow(10, max / 20.0);
@@ -295,7 +292,7 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
             double normalized = Math.Pow(p, 1.0 / intensity);
             double valueGain = normalized * (maxGain - minGain) + minGain;
 
-            return 20.0 * (Math.Log(valueGain) / Math.Log(20.0));
+            return 20.0 * Math.Log10(valueGain);
         }
 
         public override double ToPercent(double value)
@@ -303,12 +300,23 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
 
             double minGain = Math.Pow(10, min / 20);
             double maxGain = Math.Pow(10, max / 20);
-            double valueGain = Math.Pow(20, value / 20);
+            double valueGain = Math.Pow(10, value / 20);
 
             double normalized = (valueGain - minGain) / (maxGain - minGain);
 
             double percentage = Math.Pow(normalized, intensity);
             return percentage;
+        }
+
+        private static double NormalizeToPercent(double x)
+        {
+            if (double.IsNaN(x) || double.IsInfinity(x))
+                throw new ArgumentOutOfRangeException(nameof(x));
+
+            if (x >= 0.0 && x <= 1.0)
+                return Math.Clamp(x, 0.0, 1.0);
+            double y = x / 100.0;
+            return Math.Clamp(y, 0.0, 1.0);
         }
     }
     internal class Permissions

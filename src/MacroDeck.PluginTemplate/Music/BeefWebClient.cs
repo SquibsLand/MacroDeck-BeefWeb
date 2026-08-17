@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using MacroDeck.BeefWeb.Music.API;
 using MacroDeck.BeefWeb.Music.API.Posts.Player;
@@ -94,15 +95,47 @@ namespace MacroDeck.BeefWeb.Music
             {
                 throw new NotImplementedException();
             }
-            public async Task SetVolume(float percent) 
+            private async Task<(double, double)?> GetVolumeData()
             {
                 Player? player = await _ctx.GetPlayer();
-                if (player is null) return;
+                if (player is null) return null;
+                return GetVolumeData(player);
+                
+            }
+            private (double,double) GetVolumeData(Player player)
+            {
                 double max = player.volume.max;
                 double min = player.volume.min;
-                double value = new DecibleHandler(min, max).FromPercent(percent / 100);
+                return (max, min);
+            }
+            public async Task SetVolume(float percent) 
+            {
+                var pair = await GetVolumeData();
+                if (pair is null) return;
+                var (max, min) = pair.Value;
+
+                double value = new DecibleHandler(min, max).FromPercent(percent);
 
                 await SetCurrentVolume.Post(_client, (float)value);
+            }
+            public async Task SetRelativeVolume(float percent)
+            {
+                // TODO: Add logic for other volume types
+                Player? player = await _ctx.GetPlayer();
+                if (player is null) return;
+
+                var (max, min) = GetVolumeData(player);
+
+                double? oldPercent = player.volume.toPercent();
+                if(oldPercent is null) return;
+                double newPercent = (double) oldPercent + percent;
+
+
+                double newDb = new DecibleHandler(min, max).FromPercent(newPercent);
+
+                await SetCurrentVolume.Post(_client, (float) newDb);
+                                                   
+                
             }
             public async Task TogglePlayPause()
             {
