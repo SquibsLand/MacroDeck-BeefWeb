@@ -1,6 +1,4 @@
-﻿using MacroDeck.BeefWeb.Music.API;
-using MacroDeck.BeefWeb.Music.API.Responses;
-using MacroDeck.Sdk.MusicPlayer;
+﻿using MacroDeck.Sdk.MusicPlayer;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
@@ -12,7 +10,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace MacroDeck.BeefWeb.Music.API.Responses
+namespace MacroDeck.BeefWeb.Music.API.Responses.Player
 {
     enum VolumeType { db, linear, upDown }
     enum LocalPlaybackState { stopped, playing, paused }
@@ -20,7 +18,7 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
     {
         public static string ApiPath => "player";
 
-        public static Dictionary<string, string?> Query => new() { ["columns"] = Columns.GetColumnQuery() };
+        public static Dictionary<string, string?> Query => new() { ["columns"] = PlayerColumns.GetColumnQuery() };
 
         public required Player player { get; init; }
 
@@ -169,11 +167,11 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
         public required List<JsonElement> rawColumns { get; init; }
 
         [JsonIgnore]
-        public Columns? columns { get; private set; }
+        public PlayerColumns? columns { get; private set; }
 
         public void OnDeserialized()
         {
-            columns = new Columns(rawColumns);
+            columns = new PlayerColumns(rawColumns);
 
             position = TimeSpan.FromSeconds(rawPosition);
             duration = TimeSpan.FromSeconds(rawDuration);
@@ -183,10 +181,9 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
 
     }
 
-    internal sealed class Columns
+    internal sealed class PlayerColumns : Columns<PlayerColumns>, IColumns
     {
-        private static readonly string[] columnsQuery =
-        {
+        public static string[] ColumnsQuery => [
             "%isplaying%",
             "%ispaused%",
             "%album artist%",
@@ -197,39 +194,33 @@ namespace MacroDeck.BeefWeb.Music.API.Responses
             "%length_seconds%",
             "%playback_time_seconds%",
             "%rating%",
-        };
+        ];
+
 
         public bool isPlaying { get; init; }
         public bool isPaused { get; init; }
-        public string albumArtist { get; init; } = default!;
-        public string album { get; init; } = default!;
-        public string artist { get; init; } = default!;
-        public string title { get; init; } = default!;
-        public int trackNumber { get; init; }
-        public int length { get; init; }
-        public int elapsed { get; init; }
-        public int rating { get; init; }
+        public string albumArtist { get; init; }
+        public string album { get; init; }
+        public string artist { get; init; }
+        public string title { get; init; }
+        public int? trackNumber { get; init; }
+        public int? length { get; init; }
+        public int? elapsed { get; init; }
+        public int? rating { get; init; }
 
-
-        public Columns(List<JsonElement> columns)
+        public PlayerColumns(List<JsonElement> columns) : base(columns)
         {
-            if (columns.Count < columnsQuery.Length) return;
-            isPlaying = columns[0].GetString() == "1";
-            isPaused = columns[1].GetString() == "1";
-            albumArtist = columns[2].GetString() ?? "?";
-            album = columns[3].GetString() ?? "?";
-            artist = columns[4].GetString() ?? "?";
-            title = columns[5].GetString() ?? "?";
-            trackNumber = int.Parse(columns[6].GetString());
-            length = int.Parse(columns[7].GetString());
-            elapsed = int.Parse(columns[8].GetString());
-            rating = int.Parse(columns[9].GetString());
+            isPlaying = NextString() == "1";
+            isPaused = NextString() == "1";
+            albumArtist = NextString();
+            album = NextString();
+            artist = NextString();
+            title = NextString();
+            trackNumber = NextInt();
+            length = NextInt();
+            elapsed = NextInt();
+            rating = NextInt();
         }
-        public static string GetColumnQuery()
-        {
-            return string.Join(",", columnsQuery);
-        }
-
     }
     internal class Volume : IJsonOnDeserialized
     {

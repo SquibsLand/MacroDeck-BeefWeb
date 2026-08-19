@@ -1,13 +1,15 @@
-﻿using System;
+﻿using MacroDeck.BeefWeb.Music.API;
+using MacroDeck.BeefWeb.Music.API.Posts.Player;
+using MacroDeck.BeefWeb.Music.API.Responses.Player;
+using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
+using MacroDeck.Sdk.MusicPlayer;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using System.Text;
-using MacroDeck.BeefWeb.Music.API;
-using MacroDeck.BeefWeb.Music.API.Posts.Player;
-using MacroDeck.BeefWeb.Music.API.Responses;
-using MacroDeck.Sdk.MusicPlayer;
-using Microsoft.Extensions.DependencyInjection;
 
 
 namespace MacroDeck.BeefWeb.Music
@@ -49,7 +51,26 @@ namespace MacroDeck.BeefWeb.Music
             return new(data, mimeType);
 
         }
+
+        
+
         public async Task<Player?> GetPlayer() => await PlayerRoot.Fetch(sharedClient);
+        public async Task<PlaylistItems?> GetPlaylistItems(string pid, string? range = null) {
+            if(range is null)
+            {
+                SinglePlaylist? item = await GetPlaylist(pid);
+                if(item is null) return null;
+                range = $"0:{item.itemCount}";
+            }
+            PlaylistItems? items = await PlaylistItemsRoot.Fetch(sharedClient, new PlaylistItemsArgs { PlaylistId = pid, Range = range });
+            if(items is PlaylistItems playlistItems)
+            {
+                return items.WithPID(pid);
+            }
+            return null;
+        }
+        public async Task<PlaylistRoot?> GetAllPlaylists() => await PlaylistRoot.Fetch(sharedClient);
+        public async Task<SinglePlaylist?> GetPlaylist(string pid) => await SinglePlaylist.Fetch(sharedClient, new SinglePlaylistArgs { PlaylistId=pid });
 
         internal class BeefWebCommands(BeefWebClient ctx, HttpClient client)
         {
@@ -142,6 +163,10 @@ namespace MacroDeck.BeefWeb.Music
                 await PausePlay.Post(_client);
             }
 
+            public async Task SetCurrnetPlaylist(string pid, int index = 0)
+            {
+                await PlayPlaylist.Post(_client, args: new PlayPlaylistParams { PlaylistId = pid, Index = index.ToString() });
+            }
         }
     }
     

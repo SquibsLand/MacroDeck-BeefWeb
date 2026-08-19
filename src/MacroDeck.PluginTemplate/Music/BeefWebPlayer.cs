@@ -1,15 +1,17 @@
 using MacroDeck.BeefWeb.Music.API;
-using MacroDeck.BeefWeb.Music.API.Responses;
+using MacroDeck.BeefWeb.Music.API.Responses.Player;
+using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
 using MacroDeck.Sdk.Logging;
 using MacroDeck.Sdk.MusicPlayer;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace MacroDeck.BeefWeb.Music
 {
-    internal sealed class BeefWebPlayer : IMusicPlayer
+    internal sealed class BeefWebPlayer : IMusicPlayer, IMusicPlayerCatalogProvider
     {
         private static readonly ILogger _logger =
         IntegrationLog.For<BeefWebPlayer>(BeefWebIntergration.IntegrationId);
@@ -127,10 +129,48 @@ namespace MacroDeck.BeefWeb.Music
             if (client is null) return;
             await client.Commands.SetRelativeVolume(volumePercent);
         }
+        public async Task SetCurrentPlaylist(string pid, int index = 0)
+        {
+            if (client is null) return;
+            await client.Commands.SetCurrnetPlaylist(pid, index);
+        }
         public async Task TogglePlayPauseAsync(CancellationToken cancellationToken = default)
         {
             if (client is null) return;
             await client.Commands.TogglePlayPause();
+        }
+        public async Task<IReadOnlyList<MusicPlayerCatalogItem>> GetPlaylists(CancellationToken cancellationToken = default)
+        {
+            if (client is null) throw new Exception("Client is null");
+            IReadOnlyList<MusicPlayerCatalogItem> catalogItems = [];
+            if(await client.GetAllPlaylists() is PlaylistRoot playlists)
+            {
+                catalogItems = playlists.ToCatalogItems();
+            }
+            return catalogItems;
+        }
+        public async Task<IReadOnlyList<MusicPlayerCatalogItem>> GetPlaylistItems(string pid,  CancellationToken cancellationToken = default)
+        {
+            if (client is null) throw new Exception("Client is null");
+            IReadOnlyList<MusicPlayerCatalogItem> catalogItems = [];
+            if (await client.GetPlaylistItems(pid) is PlaylistItems playlistItems)
+            {
+                catalogItems = playlistItems.ToCatalogItems();
+            }
+            return catalogItems;
+        }
+        public async Task<SinglePlaylist?> GetSinglePlaylist(string pid, CancellationToken cancellationToken = default)
+        {
+            if (client is null) return null;
+            if(await client.GetPlaylist(pid) is SinglePlaylist playlist)
+            {
+                return playlist;
+            }
+            return null;
+        }
+        public async Task<IReadOnlyList<MusicPlayerCatalogItem>> GetCatalogAsync(string instanceId, MusicPlayerCatalogItemKind kind, string? filter, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

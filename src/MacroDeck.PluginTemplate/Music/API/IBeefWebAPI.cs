@@ -1,4 +1,4 @@
-﻿using MacroDeck.BeefWeb.Music.API.Responses;
+﻿using MacroDeck.BeefWeb.Music.API.Responses.Player;
 using MacroDeck.Sdk.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SignalR;
@@ -35,16 +35,19 @@ namespace MacroDeck.BeefWeb.Music.API
         string? Password { get; }
         Task<Player?> GetPlayer();
     }
-    public interface IApiResource<TChild>
+    public interface IApiResource<TChild, TArgs>
     {
         static abstract string ApiPath { get; }
 
-        static abstract Dictionary<string, string?> Query { get; }
+        static virtual Dictionary<string, string?>? Query => null;
+        static abstract string BuildApiPath(TArgs args);
     }
     public interface IApiResource : IApiResource<EmptyClass> { }
-    internal abstract class BeefWebAIPBase<TSelf, TChild> : JSONPareser<TSelf>
-        where TSelf : BeefWebAIPBase<TSelf, TChild>, IApiResource<TChild>
+    public interface IApiResource<TChild> : IApiResource<TChild, EmptyClass> { }
+    internal abstract class BeefWebAPIBase<TSelf, TChild, TArgs> : JSONPareser<TSelf>
+        where TSelf : BeefWebAPIBase<TSelf, TChild, TArgs>, IApiResource<TChild, TArgs>
         where TChild : class
+        where TArgs : class
     {
         protected static readonly ILogger _logger =
            IntegrationLog.For<BeefWebPlayer>(BeefWebIntergration.IntegrationId);
@@ -75,38 +78,59 @@ namespace MacroDeck.BeefWeb.Music.API
                 return null;
             }
         }
+        protected static string GetRelativeQuery(TArgs? args)
+        {
+
+            var apiPath = args is EmptyClass || args is null
+                ? TSelf.ApiPath
+                : TSelf.BuildApiPath(args);
+
+            return TSelf.Query is Dictionary<string, string?> query
+                ? QueryHelpers.AddQueryString(apiPath, query)
+                : apiPath;
+        }
     }
 
-    internal abstract class BeefWebAPICall<TSelf, TChild> : BeefWebAIPBase<TSelf, TChild>
-        where TSelf : BeefWebAPICall<TSelf, TChild>, IApiResource<TChild>
+    internal abstract class BeefWebAPICall<TSelf, TChild, TArgs> : BeefWebAPIBase<TSelf, TChild, TArgs>
+        where TSelf : BeefWebAPICall<TSelf, TChild, TArgs>, IApiResource<TChild, TArgs>
         where TChild : class
+        where TArgs : class
     {
-        public static async Task<TChild?> Fetch(HttpClient client)
+        public static async Task<TChild?> Fetch(HttpClient client, TArgs args )
         {
-            var relativeWithQuery = QueryHelpers.AddQueryString(
-                TSelf.ApiPath,
-                TSelf.Query);
+            string relativeWithQuery = GetRelativeQuery(args);
             using HttpResponseMessage response = await client.GetAsync(relativeWithQuery);
 
             return await ParseResponse(response);
 
         }
-        
     }
-    internal abstract class BeefWebAPISend<TSelf, TParams, TResponse> : BeefWebAIPBase<TSelf, TResponse>
-        where TSelf : BeefWebAPISend<TSelf, TParams, TResponse>, IApiResource<TResponse>
+    internal abstract class BeefWebAPICall<TSelf> : BeefWebAPICall<TSelf, TSelf>
+        where TSelf : BeefWebAPICall<TSelf>, IApiResource<TSelf>
+    { }
+    internal abstract class BeefWebAPICall<TSelf, TChild> : BeefWebAPICall<TSelf, TChild, EmptyClass>
+        where TSelf : BeefWebAPICall<TSelf,TChild>, IApiResource<TChild>
+        where TChild : class
+    {
+        public static string BuildApiPath(EmptyClass args) => TSelf.ApiPath;
+        public static Task<TChild?> Fetch(HttpClient client) => Fetch(client, new EmptyClass());
+    }
+    internal abstract class BeefWebAPISend<TSelf, TParams, TResponse, TArgs> : BeefWebAPIBase<TSelf, TResponse, TArgs>
+        where TSelf : BeefWebAPISend<TSelf, TParams, TResponse, TArgs>, IApiResource<TResponse, TArgs>
         where TResponse : class
-        where TParams : HttpContent 
+        where TParams : HttpContent
+        where TArgs : class
     {
 
         public static Dictionary<string, string?> Query => [];
-        public static async Task<TResponse?> Post(HttpClient client, TParams? postContent = null)
+        public static async Task<TResponse?> Post(HttpClient client, TParams? postContent = null, TArgs? args = null)
         {
-            using HttpResponseMessage reponse = await client.PostAsync(TSelf.ApiPath, postContent);
+            using HttpResponseMessage reponse = await client.PostAsync(GetRelativeQuery(args), postContent);
             
             return await ParseResponse(reponse);
 
         }
+        public static string BuildApiPath(EmptyClass args) => TSelf.ApiPath;
     }
     internal abstract class BeefWebAPISend<TSelf>
         : BeefWebAPISend<TSelf, NoBodyContent, EmptyClass>
@@ -119,7 +143,11 @@ namespace MacroDeck.BeefWeb.Music.API
         where TSelf : BeefWebAPISend<TSelf, TResponse>, IApiResource<TResponse>
         where TResponse : class
     { }
-
+    internal abstract class BeefWebAPISend<TSelf, TParams, TResponse> : BeefWebAPISend<TSelf, TParams, TResponse, EmptyClass>
+        where TSelf : BeefWebAPISend<TSelf, TParams, TResponse>, IApiResource<TResponse>
+        where TResponse : class
+        where TParams : HttpContent
+    { }
     internal sealed class NoBodyContent : HttpContent
     {
         protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)

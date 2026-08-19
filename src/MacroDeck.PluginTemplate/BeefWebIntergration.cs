@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using ILogger = Serilog.ILogger;
 using MacroDeck.BeefWeb.Music.API;
 using Microsoft.AspNetCore.Mvc;
+using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
 
 namespace MacroDeck.BeefWeb;
 
@@ -75,7 +76,15 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
 
 			if(!string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(portString) && !string.IsNullOrWhiteSpace(type))
 			{
-				Player.init(address, int.Parse(portString), PlayerType.FOOBAR);
+				if(Enum.TryParse<PlayerType>(type, out PlayerType playerType))
+				{
+
+				}
+				else
+				{
+					_logger.Error($"Uknown player type of {type}, defaulting to Foobar");
+					Player.init(address, int.Parse(portString), PlayerType.FOOBAR);
+				}
 			} else
 			{
 				IsInitialized = false;
@@ -120,7 +129,7 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
 	];
     internal IReadOnlyList<ActionParameterOption> InstanceOptions()
         => [.. GetInstances().Select(instance => new ActionParameterOption { Value = instance.Id, Label = instance.DisplayName })];
-
+	
     // ----- IConfigFlowProvider -----
 
     public IConfigFlow CreateConfigFlow() => new BeefWebConfigFlow();
@@ -159,4 +168,29 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
     public IReadOnlyList<MusicPlayerInstance> GetInstances() => [new MusicPlayerInstance(PlayerID, PlayerDisplayName)];
     private IMusicPlayer? ResolvePlayer(string? instanceId)
         =>  GetPlayer(PlayerID);
-}
+	internal async Task<IReadOnlyList<ActionParameterOption>?> GetPlaylistOptions()
+	{
+		if (Player == null) return null;
+		var playlists = await Player.GetPlaylists();
+        if (playlists is null) return null;
+		List<ActionParameterOption> options = [];
+        foreach (var item in playlists)
+        {
+			options.Add(new ActionParameterOption { Value = item.Id, Label = item.Title });
+        }
+		return options;
+    }
+	internal async Task<IReadOnlyList<ActionParameterOption>?> GetPlaylistItemsOptions(string pid)
+	{
+		if (Player is null) return null;
+		var items = await Player.GetPlaylistItems(pid);
+		if (items is null) return null;
+		List<ActionParameterOption> options = [];
+		foreach(var item in items)
+		{
+			options.Add(new ActionParameterOption { Value = item.Id, Label = item.Title });
+		}
+		return options;
+	}
+
+}	

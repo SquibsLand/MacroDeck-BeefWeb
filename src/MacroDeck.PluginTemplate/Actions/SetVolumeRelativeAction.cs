@@ -5,13 +5,13 @@ using System.Text;
 
 namespace MacroDeck.BeefWeb.Actions
 {
-    sealed internal class VolumeExecutor(BeefWebIntergration intergration) : BeefWebExecutor<double>
+    sealed internal class VolumeExecutor(BeefWebIntergration intergration) : BeefWebExecutor
     {
         protected override BeefWebIntergration Intergration => intergration;
 
         public override async Task<ActionResult> ExecuteAsync(ActionExecutionContext context)
         {
-            if(IsValid(context, "volume-value", out var volume))
+            if(IsValid(context, "volume-value", out double volume))
             {
                 await Intergration.Player.SetRelativeVolumeAsync((int) MathF.Round((float) volume));
             }
@@ -25,7 +25,7 @@ namespace MacroDeck.BeefWeb.Actions
 
     }
 
-    internal class SetVolumeRelativeAction(BeefWebIntergration _intergration) : BaseBeefWebAction<VolumeExecutor, double>(_intergration)
+    internal class SetVolumeRelativeAction(BeefWebIntergration _intergration) : BaseBeefWebAction<VolumeExecutor>(_intergration)
     {
         public override string Id => "relative-volume";
 

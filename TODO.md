@@ -9,7 +9,6 @@ Extension of IMusicPlayer
 - [X] PauseAsync
 - [X] PlayAsync
 - [ ] PlayItemAsync
-	- This appears to be unused, but I plan to support it
 - [X] PreviousAsync
 - [X] SeekAsync
 - [!] SetRepeatModeAsync
@@ -19,7 +18,7 @@ Extension of IMusicPlayer
 - [X] SetVolumeAsync
 - [X] TogglePlayPauseAsync
 
-## Custom Actions (0/5)
+## Custom Actions (3/7)
 - [ ] Refresh
 - [ ] Add to Playback Queue
 - [ ] Stop after next track
@@ -27,16 +26,18 @@ Extension of IMusicPlayer
 - [X] Volume Relative
 	- Due to the conversion from DB to Percent, volume relative is calculated locally and not by beefweb.
 - [ ] Get Custom Value
+- [X] Change active playlist
 
-## Varriables
+## Varriables (0/5)
 - [ ] Title
 - [ ] Artist
 - [ ] Is Playing
 - [ ] Volume
+- [ ] Current Playlist
+- [ ] Rating
 
-## Events
+## Events (0/1)
 - [ ] Track Changed
 
 ## Ideas
 - Output/Speaker Control
-- 

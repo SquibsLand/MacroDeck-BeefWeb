@@ -1,17 +1,18 @@
 ﻿using MacroDeck.Sdk.Actions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace MacroDeck.BeefWeb.Actions
 {
     // TODO: Currently this only does logic for all keys having the same value, this should be changed.
-    public abstract class BeefWebExecutor<T> : IActionExecutor
+    public abstract class BeefWebExecutor : IActionExecutor
     {
         protected abstract BeefWebIntergration Intergration { get; }
 
         public abstract Task<ActionResult> ExecuteAsync(ActionExecutionContext context);
-        protected static bool IsValid(ActionExecutionContext context, string key, out T? result)
+        protected static bool IsValid<T>(ActionExecutionContext context, string key, [NotNullWhen(true)] out T? result)
         {
             context.Parameters.TryGetValue(key, out object? value);
             
@@ -26,8 +27,8 @@ namespace MacroDeck.BeefWeb.Actions
         }
     }
 
-    internal abstract class BaseBeefWebAction<TExecutor, T>(BeefWebIntergration integration) : IActionDefinition, IDynamicOptionsActionDefinition
-        where TExecutor : BeefWebExecutor<T>
+    internal abstract class BaseBeefWebAction<TExecutor>(BeefWebIntergration integration) : IActionDefinition, IDynamicOptionsActionDefinition
+        where TExecutor : BeefWebExecutor
     {
         protected BeefWebIntergration Integration => integration;
         public abstract string Id { get; }

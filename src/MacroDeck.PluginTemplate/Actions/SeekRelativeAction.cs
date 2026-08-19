@@ -10,13 +10,13 @@ using System.Text;
 
 namespace MacroDeck.BeefWeb.Actions
 {
-    internal sealed class SeekExecutor(BeefWebIntergration integration) : BeefWebExecutor<double>
+    internal sealed class SeekExecutor(BeefWebIntergration integration) : BeefWebExecutor
     {
         protected override BeefWebIntergration Intergration => integration;
 
         public override async Task<ActionResult> ExecuteAsync(ActionExecutionContext context)
         {
-            if (IsValid(context, "seek-value", out var seconds))
+            if (IsValid(context, "seek-value", out double seconds))
             {
                 await Intergration.Player.SeekRelativeAsync(TimeSpan.FromMilliseconds(seconds * 1000));
             }
@@ -30,7 +30,7 @@ namespace MacroDeck.BeefWeb.Actions
         }
     }
 
-    internal class SeekRelativeAction(BeefWebIntergration _integration) : BaseBeefWebAction<SeekExecutor, double>(_integration)
+    internal class SeekRelativeAction(BeefWebIntergration _integration) : BaseBeefWebAction<SeekExecutor>(_integration)
     {
 
         public override string Id => "seek-relative";

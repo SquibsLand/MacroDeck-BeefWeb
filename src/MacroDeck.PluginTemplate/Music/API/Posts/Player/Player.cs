@@ -1,5 +1,4 @@
-﻿using MacroDeck.BeefWeb.Music.API.Responses;
-using MacroDeck.Sdk.MusicPlayer;
+﻿using MacroDeck.Sdk.MusicPlayer;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -8,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using static MacroDeck.BeefWeb.Music.API.Responses.Player;
+using static MacroDeck.BeefWeb.Music.API.Responses.Player.Player;
 
 namespace MacroDeck.BeefWeb.Music.API.Posts.Player
 {
@@ -80,7 +79,7 @@ namespace MacroDeck.BeefWeb.Music.API.Posts.Player
 
     internal class SetCurrentRepeatMode : SetPlayer<SetCurrentRepeatMode>
     {
-        public static async Task Post(Responses.Player player, HttpClient client, RepeatMode mode)
+        public static async Task Post(Responses.Player.Player player, HttpClient client, RepeatMode mode)
         {
             throw new NotImplementedException();
             //int? index = player.FindPlaybackMode(mode);

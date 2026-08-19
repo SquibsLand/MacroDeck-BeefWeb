@@ -20,11 +20,12 @@ namespace MacroDeck.BeefWeb
         private readonly Func<IReadOnlyList<MusicPlayerInstance>> getInstances = getInstances;
         public IReadOnlyList<IActionDefinition> Get()
         {
-        return [.. Common(), ..Custom()];
+        return [.. Common(), ..Custom(), ..Debuging()];
         }
 
         public IReadOnlyList<IActionDefinition> Common() => MusicPlayerActions.Common(resolver, getInstances);
-        public IReadOnlyList<IActionDefinition> Custom() => [new SeekRelativeAction(intergration), new SetVolumeRelativeAction(intergration)];
+        public IReadOnlyList<IActionDefinition> Custom() => [new SeekRelativeAction(intergration), new SetVolumeRelativeAction(intergration), new SetActivePlaylist(intergration)];
+        internal IReadOnlyList<IActionDefinition> Debuging() => [];
 
     }
 }
