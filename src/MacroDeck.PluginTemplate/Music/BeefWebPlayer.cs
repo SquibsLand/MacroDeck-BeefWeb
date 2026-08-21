@@ -16,6 +16,7 @@ namespace MacroDeck.BeefWeb.Music
         private static readonly ILogger _logger =
         IntegrationLog.For<BeefWebPlayer>(BeefWebIntergration.IntegrationId);
         public MusicPlayerState LastState { get; private set; } = MusicPlayerState.Disconnected;
+        public MusicPlayerState LastValidState { get; private set; } = MusicPlayerState.Disconnected;
 
         public BeefWebClient? client { get; private set; }
 
@@ -56,17 +57,23 @@ namespace MacroDeck.BeefWeb.Music
                 return null;
             }
         }
-
         public async Task<MusicPlayerState> GetStateAsync(CancellationToken cancellationToken = default)
         {
+            MusicPlayerState state;
             _logger.Warning($"Client is {client != null}");
-            if (client == null) return IsUnavailable;
+            if (client == null) state = IsUnavailable;
             else {
                 Player? player = await client.GetPlayer();
                 _logger.Warning($"Player is {player!= null}");
-                if (player == null) return IsUnavailable;
-                else return player.ToMusicPlayerState();
+                if (player == null) state = IsUnavailable;
+                else {
+                    state = player.ToMusicPlayerState();
+                    this.LastState = state;
+                    if(state.IsConnected) this.LastValidState = state;
+                }
             }
+            return state;
+
         }
 
         public async Task NextAsync(CancellationToken cancellationToken = default)

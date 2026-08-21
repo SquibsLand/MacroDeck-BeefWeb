@@ -28,16 +28,25 @@ Extension of IMusicPlayer
 - [ ] Get Custom Value
 - [X] Change active playlist
 
-## Varriables (0/5)
-- [ ] Title
-- [ ] Artist
-- [ ] Is Playing
-- [ ] Volume
+## Varriables (12/14)
+- [X] Title
+- [X] Album
+- [X] Artist
+- [X] State
+- [X] Playing
+- [X] Volume
+- [X] Duration
+- [X] Position
+- [X] Progress Percentage
 - [ ] Current Playlist
+- [X] Shuffled
+- [X] Repeat Mode
+- [X] Connected
 - [ ] Rating
 
-## Events (0/1)
+## Events (0/2)
 - [ ] Track Changed
+- [ ] Playlist Changed
 
 ## Ideas
 - Output/Speaker Control
