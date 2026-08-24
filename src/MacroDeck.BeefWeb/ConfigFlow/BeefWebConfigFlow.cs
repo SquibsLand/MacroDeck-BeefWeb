@@ -32,13 +32,13 @@ sealed class BeefWebConfigFlow : IConfigFlow
 		{
 			return Task.FromResult(ConfigFlowResult.Error(BuildStep(),
 				"Enter a server address.",
-				new Dictionary<string, string> { [ServerFieldName] = "Required." }));
+				new Dictionary<string, Localization.LocalizedText> { [ServerFieldName] = "Required." }));
 		}
         if (input.GetValueOrDefault(PlayerTypeFieldName) is not string { Length: > 0 } type)
         {
             return Task.FromResult(ConfigFlowResult.Error(BuildStep(),
                 "Enter a player name.",
-                new Dictionary<string, string> { [PlayerTypeFieldName] = "Required." }));
+                new Dictionary<string, Localization.LocalizedText> { [PlayerTypeFieldName] = "Required." }));
         }
 
         return Task.FromResult(ConfigFlowResult.Complete($"{type} ({server})"));

@@ -1,4 +1,5 @@
-﻿using MacroDeck.Sdk.Actions;
+﻿using MacroDeck.Localization;
+using MacroDeck.Sdk.Actions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -35,6 +36,10 @@ namespace MacroDeck.BeefWeb.Actions
         public abstract string Name { get; }
         public abstract string Description { get; }
         public abstract IReadOnlyList<ActionParameter> Parameters { get; }
+
+        LocalizedText IActionDefinition.Name => Name;
+
+        LocalizedText IActionDefinition.Description => Description;
 
         protected abstract TExecutor CreateNewExecutor();
         IActionExecutor IActionDefinition.CreateExecutor() => CreateNewExecutor();

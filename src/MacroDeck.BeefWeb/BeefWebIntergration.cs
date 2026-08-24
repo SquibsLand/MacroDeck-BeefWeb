@@ -1,6 +1,7 @@
 using MacroDeck.BeefWeb.ConfigFlow;
 using MacroDeck.BeefWeb.Music;
 using MacroDeck.BeefWeb.Music.API;
+using MacroDeck.Localization;
 using MacroDeck.Plugin.Hosting;
 using MacroDeck.Plugin.Hosting.Integrations;
 using MacroDeck.Sdk;
@@ -15,43 +16,35 @@ using ILogger = Serilog.ILogger;
 
 namespace MacroDeck.BeefWeb;
 
-public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEventProvider,
-    IConfigFlowProvider, IIntegrationIconProvider, IMusicPlayerProvider
+public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvider, IConfigFlowProvider, IVariableProvider
 {
 
     private const string PlayerID = "beefweb";
     private const string PlayerDisplayName = "BeefWeb";
 
-    private readonly byte[] _icon;
+    public IReadOnlyList<ProvidedVariable> ProvidedVariables => BeefWebVaribles.Declare(PlayerID);
 
-    private readonly IPluginCatalogNotifier _catalogNotifier;
-    private readonly ILogger _logger = Log.ForContext<BeefWebIntergration>();
+    private readonly ILogger _logger;
 
     private IIntegrationContext? _context;
 
-    public BeefWebIntergration(IPluginCatalogNotifier catalogNotifier,
-        PluginMetadata metadata,
-        IHostEnvironment environment)
+    public BeefWebIntergration(ILogger logger)
     {
-        _catalogNotifier = catalogNotifier;
-        _icon = LoadIcon(metadata, environment);
+        
+        _logger = logger.ForContext<BeefWebIntergration>();
         Player = new BeefWebPlayer();
         Actions = new BeefWebActions(this, ResolvePlayer, GetInstances).Get();
     }
 
     public const string IntegrationId = "app.macro-deck.beefweb";
-    public string Id => IntegrationId;
-
-    public string Name => "Sample";
-
-    public string Version => "1.0.0";
 
     public bool IsInitialized { get; private set; }
+    internal IReadOnlyList<ActionParameterOption> InstanceOptions() => [.. GetInstances().Select(instance => new ActionParameterOption { Value = instance.Id, Label = instance.DisplayName })];
 
     public IReadOnlyList<IActionDefinition> Actions { get; }
 
-    internal BeefWebPlayer Player { get; }
-    public bool VariablesDependOnConfiguration => true;
+    internal BeefWebPlayer Player { get; init; }
+    public static bool VariablesDependOnConfiguration => true;
 
     public async Task InitializeAsync(IIntegrationContext context)
     {
@@ -102,11 +95,7 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
         return Task.CompletedTask;
     }
 
-    // ----- IVariableProvider: pull-based, polled by the host on each variable's own interval. -----
-
-    public IReadOnlyList<ProvidedVariable> ProvidedVariables => [.. BeefWebVaribles.Declare(PlayerID)];
-
-    public Task<object?> GetValueAsync(string name, CancellationToken cancellationToken)
+    public async Task<object?> GetValueAsync(string name, CancellationToken cancellationToken)
     {
         string prefix = BeefWebVaribles.prefix;
         string withoutPrefix = name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? name[prefix.Length..] : name;
@@ -116,56 +105,9 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
         var remainder = withoutPrefix[keyPrefix.Length..];
         variableName = remainder;
 
-        if (variableName.Contains("percentage"))
-        {
-            _logger.Debug("Stop Here");
-        }
+        if (Player is null) return null;
+        return BeefWebVaribles.Get(variableName, Player.LastValidState);
 
-        return Task.FromResult(BeefWebVaribles.Get(variableName, Player.LastValidState));
-    
-    }
-
-    // ----- IEventProvider: declares what this plugin can raise; publishing goes through IEventPublisher. -----
-
-    public string ProviderName => "Sample";
-
-    public IReadOnlyList<EventDefinition> EventDefinitions { get; } =
-    [
-
-    ];
-    internal IReadOnlyList<ActionParameterOption> InstanceOptions()
-        => [.. GetInstances().Select(instance => new ActionParameterOption { Value = instance.Id, Label = instance.DisplayName })];
-
-    // ----- IConfigFlowProvider -----
-
-    public IConfigFlow CreateConfigFlow() => new BeefWebConfigFlow();
-
-    public bool AllowsMultipleConfigurations => false;
-
-    // ----- IIntegrationIconProvider -----
-
-    public string IconMimeType => "image/svg+xml";
-
-    public byte[] GetIcon() => _icon;
-
-    /// <summary>
-    /// Reads the very file the manifest's "icon" declares, resolved the same way the SDK resolves it
-    /// when it validates the manifest at startup: verbatim relative path, forward slashes, against the
-    /// content root. Keeping the manifest as the single source means the icon exists once in the build
-    /// output rather than once on disk and once more embedded in the assembly.
-    /// </summary>
-    private static byte[] LoadIcon(PluginMetadata metadata, IHostEnvironment environment)
-    {
-        if (string.IsNullOrEmpty(metadata.IconPath))
-        {
-            throw new InvalidOperationException(
-                "The manifest declares no \"icon\", so IIntegrationIconProvider has nothing to serve.");
-        }
-
-        var path = Path.Combine(environment.ContentRootPath,
-            metadata.IconPath.Replace('/', Path.DirectorySeparatorChar));
-
-        return File.ReadAllBytes(path);
     }
 
     // ----- IMusicPlayerProvider -----
@@ -199,4 +141,5 @@ public sealed class BeefWebIntergration : IIntegration, IVariableProvider, IEven
         return options;
     }
 
+    public IConfigFlow CreateConfigFlow() => new BeefWebConfigFlow();
 }

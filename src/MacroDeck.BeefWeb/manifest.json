@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schemas.macro-deck.app/plugin-manifest-v1.schema.json",
+  "manifestVersion": 1,
+  "id": "app.macro-deck.beefweb",
+  "name": "BeefWebr",
+  "version": "1.0.0",
+  "description": "Connect MacroDeck with your Foobar2000 or DeaDBeeF music player",
+  "icon": "Assets/icon.svg",
+  "entrypoints": {
+    "win-x64": {
+      "executable": "runtimes/win-x64/MacroDeck.BeefWeb.exe"
+    },
+    "osx-arm64": {
+      "executable": "runtimes/osx-arm64/MacroDeck.BeefWeb"
+    },
+    "osx-x64": {
+      "executable": "runtimes/osx-x64/MacroDeck.BeefWeb"
+    },
+    "linux-x64": {
+      "executable": "runtimes/linux-x64/MacroDeck.BeefWeb"
+    }
+  },
+  "publisher": {
+    "name": "Macro Deck",
+    "id": "app.macro-deck",
+    "url": "https://macro-deck.app"
+  },
+  "license": "MIT",
+  "homepage": "https://docs.macro-deck.app/introduction/samples-and-template/",
+  "repository": "https://github.com/SquibsLand/MacroDeck-BeefWeb",
+  "compatibility": {
+    "macroDeck": ">=3.0.0"
+  },
+  "permissions": [
+    "host:variables",
+    "events:publish"
+  ]
+}

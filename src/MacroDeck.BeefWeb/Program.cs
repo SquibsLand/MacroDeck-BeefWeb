@@ -1,10 +1,11 @@
 using MacroDeck.BeefWeb;
 using MacroDeck.Plugin.Hosting;
 using MacroDeck.Plugin.Hosting.DependencyInjection;
+using MacroDeck.Plugin.Serilog;
 
 var plugin = MacroDeckPlugin.CreatePlugin(args)
-	.UseMacroDeckLogging()
-	.ConfigureServices((_, services) => services.AddMacroDeckIntegration<BeefWebIntergration>())
+    .UseMacroDeckLogging()
+    .RegisterIntegration<BeefWebIntergration>()
 	.Build();
 
 await plugin.RunAsync();
