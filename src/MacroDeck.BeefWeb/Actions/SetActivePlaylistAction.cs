@@ -44,7 +44,7 @@ namespace MacroDeck.BeefWeb.Actions
             
         }
     }
-    internal class SetActivePlaylist(BeefWebIntergration _integration) : BaseBeefWebAction<SetActivePlaylistExecutor>(_integration)
+    internal class SetActivePlaylistAction(BeefWebIntergration _integration) : BaseBeefWebAction<SetActivePlaylistExecutor>(_integration)
     {
         public override string Id => "set-active-playlist";
 

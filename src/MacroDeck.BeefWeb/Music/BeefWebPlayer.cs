@@ -109,9 +109,10 @@ namespace MacroDeck.BeefWeb.Music
             await client.Commands.Play();
         }
 
-        public Task PlayItemAsync(MusicPlayerCatalogItem item, CancellationToken cancellationToken = default)
+        public async Task PlayItemAsync(string pid, int index)
         {
-            throw new NotImplementedException();
+            if (client is null) return;
+            await client.Commands.PlayItem(pid, index);
         }
 
         public async Task PreviousAsync(CancellationToken cancellationToken = default)

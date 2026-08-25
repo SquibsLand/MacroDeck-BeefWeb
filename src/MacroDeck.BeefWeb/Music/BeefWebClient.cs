@@ -2,6 +2,7 @@
 using MacroDeck.BeefWeb.Music.API.Posts.Player;
 using MacroDeck.BeefWeb.Music.API.Responses.Player;
 using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
+using ApiPlayItem = MacroDeck.BeefWeb.Music.API.Posts.Player.PlayItem;
 using MacroDeck.Sdk.MusicPlayer;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -182,7 +183,10 @@ namespace MacroDeck.BeefWeb.Music
 
             public async Task SetCurrnetPlaylist(string pid, int index = 0)
             {
-                await PlayPlaylist.Post(_client, args: new PlayPlaylistParams { PlaylistId = pid, Index = index.ToString() });
+                await PlayItem(pid, index);
+            }
+            public async Task PlayItem(string pid, int index) { 
+                await ApiPlayItem.Post(_client, args: new PlayItemParams { PlaylistId = pid , Index = index.ToString() });
             }
         }
     }
