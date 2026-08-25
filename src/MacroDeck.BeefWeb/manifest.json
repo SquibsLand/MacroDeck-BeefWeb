@@ -2,7 +2,7 @@
   "$schema": "https://schemas.macro-deck.app/plugin-manifest-v1.schema.json",
   "manifestVersion": 1,
   "id": "app.macro-deck.beefweb",
-  "name": "BeefWebr",
+  "name": "BeefWeb",
   "version": "1.0.0",
   "description": "Connect MacroDeck with your Foobar2000 or DeaDBeeF music player",
   "icon": "Assets/icon.svg",

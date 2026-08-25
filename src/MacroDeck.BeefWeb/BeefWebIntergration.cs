@@ -12,6 +12,8 @@ using MacroDeck.Sdk.MusicPlayer;
 using MacroDeck.Sdk.Variables;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using static MacroDeck.BeefWeb.BeefWebVaribles.Variables;
+using ApiPlayer = MacroDeck.BeefWeb.Music.API.Responses.Player.Player;
 using ILogger = Serilog.ILogger;
 
 namespace MacroDeck.BeefWeb;
@@ -19,7 +21,7 @@ namespace MacroDeck.BeefWeb;
 public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvider, IConfigFlowProvider, IVariableProvider
 {
 
-    private const string PlayerID = "beefweb";
+    private const string PlayerID = "default";
     private const string PlayerDisplayName = "BeefWeb";
 
     public IReadOnlyList<ProvidedVariable> ProvidedVariables => BeefWebVaribles.Declare(PlayerID);
@@ -105,10 +107,22 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
         var remainder = withoutPrefix[keyPrefix.Length..];
         variableName = remainder;
 
-        if (Player is null) return null;
-        return BeefWebVaribles.Get(variableName, Player.LastValidState);
 
+        IVariable? variable = BeefWebVaribles.TryGetVariable(variableName);
+        if (variable is null) return default;
+        Type dataType = variable.DataType;
+        return variable.DataType switch
+        {
+            var t when t == typeof(ApiPlayer) && Player.LastPlayer is ApiPlayer player =>
+                BeefWebVaribles.TryGet(variableName, player),
+
+            var t when t == typeof(MusicPlayerState) =>
+                BeefWebVaribles.TryGet(variableName, Player.LastValidState),
+
+            _ => null
+        };
     }
+   
 
     // ----- IMusicPlayerProvider -----
     public IMusicPlayer? GetPlayer(string instanceId) => string.Equals(instanceId, PlayerID, StringComparison.Ordinal) ? Player : null;
