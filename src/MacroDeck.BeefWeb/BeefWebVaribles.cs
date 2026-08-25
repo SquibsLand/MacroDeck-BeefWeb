@@ -1,4 +1,5 @@
 using MacroDeck.BeefWeb.Music;
+using MacroDeck.BeefWeb.Music.API.Responses;
 using MacroDeck.BeefWeb.Music.API.Responses.Player;
 using MacroDeck.Sdk.MusicPlayer;
 using MacroDeck.Sdk.Variables;
@@ -33,6 +34,7 @@ namespace MacroDeck.BeefWeb
             public static readonly Variable<MusicPlayerState, bool?> Connected = PlayerStateHelper.Boolean("is_connected", s => s.IsConnected);
             public static readonly Variable<Player, int?> Rating = PlayerDataHelper.Numeric("rating", s => s.activeItem.columns?.rating);
             public static readonly Variable<Player, string?> Playlist = PlayerDataHelper.Text("playlist", s => s.activeItem.playlistId);
+            public static readonly Variable<PlayQueueItem[], int?> PlayQueueSize = VariableHelper<PlayQueueItem[]>.Numeric("playqueue_size", s => s.Length);
 
 
             private static readonly Dictionary<string, IVariable> ByKey =
@@ -156,12 +158,12 @@ namespace MacroDeck.BeefWeb
 
         public static IReadOnlyList<ProvidedVariable> Declare(string instanceKey) => Variables.Declare(prefix + instanceKey);
 
-        private static TValue? TryGetBase<TData, TValue>(string key, TData data) => Variables.GetValueByKey<TData, TValue>(key, data);
-        private static object? TryGetBase<TData>(string key, TData data) => Variables.GetValueByKey<TData>(key, data);
-        public static TValue? TryGet<TValue>(string key, MusicPlayerState state) => TryGetBase<MusicPlayerState, TValue>(key, state);
-        public static object? TryGet(string key, MusicPlayerState state) => TryGetBase(key, state);
-        public static TValue? TryGet<TValue>(string key, Player player) => TryGetBase<Player, TValue>(key, player);
-        public static object? TryGet(string key, Player player) => TryGetBase(key, player);
+        public static TValue? TryGet<TData, TValue>(string key, TData data) => Variables.GetValueByKey<TData, TValue>(key, data);
+        public static object? TryGet<TData>(string key, TData data) => Variables.GetValueByKey<TData>(key, data);
+        //public static TValue? TryGet<TValue>(string key, MusicPlayerState state) => TryGetBase<MusicPlayerState, TValue>(key, state);
+        //public static object? TryGet(string key, MusicPlayerState state) => TryGetBase(key, state);
+        //public static TValue? TryGet<TValue>(string key, Player player) => TryGetBase<Player, TValue>(key, player);
+        //public static object? TryGet(string key, Player player) => TryGetBase(key, player);
         public static IVariable? TryGetVariable(string key) => GetVariableByKey(key);
         private static ProvidedVariable CreateVariable(string prefix, IVariable variable) => 
             new($"{prefix}_{variable.Key}",

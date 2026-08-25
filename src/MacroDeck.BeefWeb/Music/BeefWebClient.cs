@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
+using MacroDeck.BeefWeb.Music.API.Responses;
 
 
 namespace MacroDeck.BeefWeb.Music
@@ -90,6 +91,7 @@ namespace MacroDeck.BeefWeb.Music
         public async Task<PlaylistRoot?> GetAllPlaylists() => await PlaylistRoot.Fetch(sharedClient);
         public async Task<SinglePlaylist?> GetPlaylist(string pid) => await SinglePlaylist.Fetch(sharedClient, new SinglePlaylistArgs { PlaylistId=pid });
 
+        public async Task<PlayQueueItem[]> GetPlayQueue() => await PlayQueueRoot.Fetch(sharedClient) ?? [];
         internal class BeefWebCommands(BeefWebClient ctx, HttpClient client)
         {
             private readonly BeefWebClient _ctx = ctx;
@@ -141,7 +143,7 @@ namespace MacroDeck.BeefWeb.Music
                 return GetVolumeData(player);
                 
             }
-            private (double,double) GetVolumeData(Player player)
+            private static (double,double) GetVolumeData(Player player)
             {
                 double max = player.volume.max;
                 double min = player.volume.min;

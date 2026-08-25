@@ -1,4 +1,5 @@
 using MacroDeck.BeefWeb.Music.API;
+using MacroDeck.BeefWeb.Music.API.Responses;
 using MacroDeck.BeefWeb.Music.API.Responses.Player;
 using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
 using MacroDeck.Sdk.Logging;
@@ -18,6 +19,7 @@ namespace MacroDeck.BeefWeb.Music
         public PlayerType? PlayerType { get; set; }
         public MusicPlayerState LastState { get; private set; } = MusicPlayerState.Disconnected;
         public MusicPlayerState LastValidState { get; private set; } = MusicPlayerState.Disconnected;
+        public PlayQueueItem[] LastPlayQueue { get; private set; } = [];
         public Player? LastPlayer { get; private set;  } 
 
         public BeefWebClient? client { get; private set; }
@@ -83,12 +85,17 @@ namespace MacroDeck.BeefWeb.Music
 
         }
 
-        private async Task<Player?> GetPlayer()
+        private async Task<Player?> GetPlayer(bool getQueue = true)
         {
             if(client is null) return null;
             Player? player = await client.GetPlayer();
             if(player is null) return null;
             LastPlayer = player;
+
+            if (getQueue)
+            {
+                LastPlayQueue = await client.GetPlayQueue();
+            }
             return LastPlayer;
         }
         public async Task NextAsync(CancellationToken cancellationToken = default)

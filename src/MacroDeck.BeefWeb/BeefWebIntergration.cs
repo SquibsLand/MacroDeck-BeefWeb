@@ -1,17 +1,12 @@
 using MacroDeck.BeefWeb.ConfigFlow;
 using MacroDeck.BeefWeb.Music;
 using MacroDeck.BeefWeb.Music.API;
-using MacroDeck.Localization;
-using MacroDeck.Plugin.Hosting;
-using MacroDeck.Plugin.Hosting.Integrations;
+using MacroDeck.BeefWeb.Music.API.Responses;
 using MacroDeck.Sdk;
 using MacroDeck.Sdk.Actions;
 using MacroDeck.Sdk.ConfigFlow;
-using MacroDeck.Sdk.Events;
 using MacroDeck.Sdk.MusicPlayer;
 using MacroDeck.Sdk.Variables;
-using Microsoft.Extensions.Hosting;
-using Serilog;
 using static MacroDeck.BeefWeb.BeefWebVaribles.Variables;
 using ApiPlayer = MacroDeck.BeefWeb.Music.API.Responses.Player.Player;
 using ILogger = Serilog.ILogger;
@@ -115,10 +110,10 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
         {
             var t when t == typeof(ApiPlayer) && Player.LastPlayer is ApiPlayer player =>
                 BeefWebVaribles.TryGet(variableName, player),
-
             var t when t == typeof(MusicPlayerState) =>
                 BeefWebVaribles.TryGet(variableName, Player.LastValidState),
-
+            var t when t == typeof(PlayQueueItem[]) =>
+                BeefWebVaribles.TryGet(variableName, Player.LastPlayQueue),
             _ => null
         };
     }
