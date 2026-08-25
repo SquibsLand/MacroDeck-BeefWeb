@@ -24,10 +24,7 @@ namespace MacroDeck.BeefWeb
             public static readonly Variable<MusicPlayerState, int?> Volume = PlayerStateHelper.Numeric("volume", s => s.VolumePercent);
             public static readonly Variable<MusicPlayerState, float?> Duration = PlayerStateHelper.Numeric("track_duration", s => s.Duration is { } d ? (float)d.TotalMilliseconds / 1000 : null);
             public static readonly Variable<MusicPlayerState, float?> Position = PlayerStateHelper.Numeric("current_position", s => s.Position is { } p ? (float)p.TotalMilliseconds / 1000 : null);
-            // TODO: Add Percentage Logic
             public static readonly Variable<MusicPlayerState, int?> ProgressPercentage = PlayerStateHelper.Numeric("progress_percentage", s => s.Position is not null && s.Duration is not null ? (int) MathF.Round((float) (s.Position.Value / s.Duration.Value) * 100) : null);
-            // TODO: Add Album Art Logic
-            public static readonly Variable<Player, string?> AlbumArt = PlayerDataHelper.Text("album_art_url", s => null);
             public static readonly Variable<MusicPlayerState, string?> DeviceName = PlayerStateHelper.Text("device_name", s => s.DeviceName);
             public static readonly Variable<MusicPlayerState, string?> DeviceType = PlayerStateHelper.Text("device_type", s => s.DeviceType);
 

@@ -21,7 +21,7 @@ namespace MacroDeck.BeefWeb;
 public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvider, IConfigFlowProvider, IVariableProvider
 {
 
-    private const string PlayerID = "default";
+    private const string PlayerID = "player";
     private const string PlayerDisplayName = "BeefWeb";
 
     public IReadOnlyList<ProvidedVariable> ProvidedVariables => BeefWebVaribles.Declare(PlayerID);

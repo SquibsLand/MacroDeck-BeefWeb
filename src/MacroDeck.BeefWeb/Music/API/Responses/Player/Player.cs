@@ -110,11 +110,10 @@ namespace MacroDeck.BeefWeb.Music.API.Responses.Player
 
         public string ArtworkId()
         {
-            if (activeItem.columns is null) return "unknown";
-            string full = $"{activeItem.columns.album}.{activeItem.columns.artist}.{activeItem.columns.title}";
 
-            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(full);
-            return System.Convert.ToBase64String(bytes);
+            string uri = activeItem.GetArtworkUri();
+            byte[] bytes = Encoding.UTF8.GetBytes(uri);
+            return Convert.ToBase64String(bytes);
         }
 
         private static bool GetShuffleEnabled(int index, string[] modes,
@@ -177,6 +176,7 @@ namespace MacroDeck.BeefWeb.Music.API.Responses.Player
             duration = TimeSpan.FromSeconds(rawDuration);
         }
 
+        public string GetArtworkUri() => $"artwork/{playlistId}/{index}";
       
 
     }

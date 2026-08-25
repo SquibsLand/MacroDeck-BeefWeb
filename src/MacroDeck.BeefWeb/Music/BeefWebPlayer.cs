@@ -46,8 +46,12 @@ namespace MacroDeck.BeefWeb.Music
             }
             try
             {
-                MusicPlayerArtwork? artwork = await client.GetArtwork();
-                _logger.Debug(artwork?.Data.ToString());
+                if(LastPlayer is null)
+                {
+                    _logger.Warning("No previous player found to get artwork for");
+                    return default;
+                }
+                MusicPlayerArtwork? artwork = await client.GetDynamicArtwork();
                 if (artwork is null)
                 {
                     _logger.Debug("Artwork not found, yet the client is working. Artwork is likely missing");

@@ -40,6 +40,7 @@ namespace MacroDeck.BeefWeb.Music
             this.sharedClient = new HttpClient{ BaseAddress = new Uri($"http://{ServerAddress}:{ServerPort}/api/") };
             this.Commands = new BeefWebCommands(this, this.sharedClient);
         }
+        [Obsolete("This method is only kept for archiving, and has been replaced with GetArtworkDynamic")]
         public async Task<MusicPlayerArtwork?> GetArtwork()
         {
             HttpResponseMessage response = await sharedClient.GetAsync("artwork/current", HttpCompletionOption.ResponseHeadersRead);
@@ -50,6 +51,22 @@ namespace MacroDeck.BeefWeb.Music
 
             return new(data, mimeType);
 
+        }
+        public async Task<MusicPlayerArtwork?> GetDynamicArtwork() {
+
+            Player? player = await PlayerRoot.Fetch(sharedClient);
+            if (player is null) return default;
+            return await GetDynamicArtwork(player.activeItem);
+        }
+        public async Task<MusicPlayerArtwork?> GetDynamicArtwork(ActiveItem item)
+        {
+            HttpResponseMessage response = await sharedClient.GetAsync(item.GetArtworkUri(), HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            string mimeType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+            byte[] data = await response.Content.ReadAsByteArrayAsync();
+
+            return new(data, mimeType);
         }
 
         
