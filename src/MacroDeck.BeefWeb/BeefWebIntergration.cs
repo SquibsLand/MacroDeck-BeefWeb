@@ -19,8 +19,6 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
     private const string PlayerID = "player";
     private const string PlayerDisplayName = "BeefWeb";
 
-    public IReadOnlyList<ProvidedVariable> ProvidedVariables => BeefWebVaribles.Declare(PlayerID);
-
     private readonly ILogger _logger;
 
     private IIntegrationContext? _context;
@@ -42,6 +40,8 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
 
     internal BeefWebPlayer Player { get; init; }
     public static bool VariablesDependOnConfiguration => true;
+
+    public IReadOnlyList<VariableDefinition> Variables => BeefWebVaribles.Declare(PlayerID);
 
     public async Task InitializeAsync(IIntegrationContext context)
     {
@@ -92,33 +92,6 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
         return Task.CompletedTask;
     }
 
-    public async Task<object?> GetValueAsync(string name, CancellationToken cancellationToken)
-    {
-        string prefix = BeefWebVaribles.prefix;
-        string withoutPrefix = name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? name[prefix.Length..] : name;
-        string variableName = withoutPrefix;
-
-        var keyPrefix = $"{PlayerID}_";
-        var remainder = withoutPrefix[keyPrefix.Length..];
-        variableName = remainder;
-
-
-        IVariable? variable = BeefWebVaribles.TryGetVariable(variableName);
-        if (variable is null) return default;
-        Type dataType = variable.DataType;
-        return variable.DataType switch
-        {
-            var t when t == typeof(ApiPlayer) && Player.LastPlayer is ApiPlayer player =>
-                BeefWebVaribles.TryGet(variableName, player),
-            var t when t == typeof(MusicPlayerState) =>
-                BeefWebVaribles.TryGet(variableName, Player.LastValidState),
-            var t when t == typeof(PlayQueueItem[]) =>
-                BeefWebVaribles.TryGet(variableName, Player.LastPlayQueue),
-            _ => null
-        };
-    }
-   
-
     // ----- IMusicPlayerProvider -----
     public IMusicPlayer? GetPlayer(string instanceId) => string.Equals(instanceId, PlayerID, StringComparison.Ordinal) ? Player : null;
 
@@ -151,4 +124,30 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
     }
 
     public IConfigFlow CreateConfigFlow() => new BeefWebConfigFlow();
+
+    public async ValueTask<VariableReading> ReadAsync(string name, CancellationToken cancellationToken = default)
+    {
+        string prefix = BeefWebVaribles.prefix;
+        string withoutPrefix = name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? name[prefix.Length..] : name;
+        string variableName = withoutPrefix;
+
+        var keyPrefix = $"{PlayerID}_";
+        var remainder = withoutPrefix[keyPrefix.Length..];
+        variableName = remainder;
+
+
+        IVariable? variable = BeefWebVaribles.TryGetVariable(variableName);
+        if (variable is null) return default;
+        Type dataType = variable.DataType;
+        return variable.DataType switch
+        {
+            var t when t == typeof(ApiPlayer) && Player.LastPlayer is ApiPlayer player =>
+                BeefWebVaribles.TryGet(variableName, player),
+            var t when t == typeof(MusicPlayerState) =>
+                BeefWebVaribles.TryGet(variableName, Player.LastValidState),
+            var t when t == typeof(PlayQueueItem[]) =>
+                BeefWebVaribles.TryGet(variableName, Player.LastPlayQueue),
+            _ => VariableReading.Unavailable
+        };
+    }
 }

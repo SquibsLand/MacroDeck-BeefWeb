@@ -1,6 +1,6 @@
 # MacroDeck BeefWeb TODO
 
-## Player (8/12)
+## Player (10/12)
 Extension of IMusicPlayer
 - [X] GetArtworkAsync 
 	- Caching might need work
@@ -8,7 +8,7 @@ Extension of IMusicPlayer
 - [X] NextAsync
 - [X] PauseAsync
 - [X] PlayAsync
-- [ ] PlayItemAsync
+- [X] PlayItemAsync
 - [X] PreviousAsync
 - [X] SeekAsync
 - [!] SetRepeatModeAsync
@@ -18,17 +18,16 @@ Extension of IMusicPlayer
 - [X] SetVolumeAsync
 - [X] TogglePlayPauseAsync
 
-## Custom Actions (3/7)
+## Custom Actions (3/6)
 - [ ] Refresh
 - [ ] Add to Playback Queue
 - [ ] Stop after next track
 - [X] Seek Relative
 - [X] Volume Relative
-	- Due to the conversion from DB to Percent, volume relative is calculated locally and not by beefweb.
-- [ ] Get Custom Value
+	- Due to the conversion from DB to Percent, volume relative is calculated locally and not by beefweb.	
 - [X] Change active playlist
 
-## Varriables (12/14)
+## Varriables (15/15)
 - [X] Title
 - [X] Album
 - [X] Artist
@@ -38,11 +37,12 @@ Extension of IMusicPlayer
 - [X] Duration
 - [X] Position
 - [X] Progress Percentage
-- [ ] Current Playlist
+- [X] Current Playlist
 - [X] Shuffled
 - [X] Repeat Mode
 - [X] Connected
-- [ ] Rating
+- [X] Play Queue Size
+- [X] Rating
 
 ## Events (0/2)
 - [ ] Track Changed

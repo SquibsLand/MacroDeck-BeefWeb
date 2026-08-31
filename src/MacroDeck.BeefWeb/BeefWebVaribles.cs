@@ -14,27 +14,27 @@ namespace MacroDeck.BeefWeb
     
     internal static class BeefWebVaribles
     {
-        public static readonly string prefix = "beefweb_";
+        public static readonly string prefix = "beefweb-";
         internal static class Variables
         {
-            public static readonly Variable<MusicPlayerState, string?> Track = PlayerStateHelper.Text("current_track_name", s => s.TrackName);
-            public static readonly Variable<MusicPlayerState, string?> Artist = PlayerStateHelper.Text("current_artist", s => s.Artists.Count > 0 ? string.Join(", ", s.Artists) : null);
-            public static readonly Variable<MusicPlayerState, string?> Album = PlayerStateHelper.Text("current_album", s => s.AlbumName);
-            public static readonly Variable<MusicPlayerState, string?> State = PlayerStateHelper.Text("playback_state", s => s.PlaybackState.ToString().ToLowerInvariant());
-            public static readonly Variable<MusicPlayerState, bool?> Playing = PlayerStateHelper.Boolean("is_playing", s => s.PlaybackState == PlaybackState.Playing);
+            public static readonly Variable<MusicPlayerState, string?> Track = PlayerStateHelper.Text("current-track-name", s => s.TrackName);
+            public static readonly Variable<MusicPlayerState, string?> Artist = PlayerStateHelper.Text("current-artist", s => s.Artists.Count > 0 ? string.Join(", ", s.Artists) : null);
+            public static readonly Variable<MusicPlayerState, string?> Album = PlayerStateHelper.Text("current-album", s => s.AlbumName);
+            public static readonly Variable<MusicPlayerState, string?> State = PlayerStateHelper.Text("playback-state", s => s.PlaybackState.ToString().ToLowerInvariant());
+            public static readonly Variable<MusicPlayerState, bool?> Playing = PlayerStateHelper.Boolean("is-playing", s => s.PlaybackState == PlaybackState.Playing);
             public static readonly Variable<MusicPlayerState, int?> Volume = PlayerStateHelper.Numeric("volume", s => s.VolumePercent);
-            public static readonly Variable<MusicPlayerState, float?> Duration = PlayerStateHelper.Numeric("track_duration", s => s.Duration is { } d ? (float)d.TotalMilliseconds / 1000 : null);
-            public static readonly Variable<MusicPlayerState, float?> Position = PlayerStateHelper.Numeric("current_position", s => s.Position is { } p ? (float)p.TotalMilliseconds / 1000 : null);
-            public static readonly Variable<MusicPlayerState, int?> ProgressPercentage = PlayerStateHelper.Numeric("progress_percentage", s => s.Position is not null && s.Duration is not null ? (int) MathF.Round((float) (s.Position.Value / s.Duration.Value) * 100) : null);
-            public static readonly Variable<MusicPlayerState, string?> DeviceName = PlayerStateHelper.Text("device_name", s => s.DeviceName);
-            public static readonly Variable<MusicPlayerState, string?> DeviceType = PlayerStateHelper.Text("device_type", s => s.DeviceType);
+            public static readonly Variable<MusicPlayerState, float?> Duration = PlayerStateHelper.Numeric("track-duration", s => s.Duration is { } d ? (float)d.TotalMilliseconds / 1000 : null);
+            public static readonly Variable<MusicPlayerState, float?> Position = PlayerStateHelper.Numeric("current-position", s => s.Position is { } p ? (float)p.TotalMilliseconds / 1000 : null);
+            public static readonly Variable<MusicPlayerState, int?> ProgressPercentage = PlayerStateHelper.Numeric("progress-percentage", s => s.Position is not null && s.Duration is not null ? (int) MathF.Round((float) (s.Position.Value / s.Duration.Value) * 100) : null);
+            public static readonly Variable<MusicPlayerState, string?> DeviceName = PlayerStateHelper.Text("device-name", s => s.DeviceName);
+            public static readonly Variable<MusicPlayerState, string?> DeviceType = PlayerStateHelper.Text("device-type", s => s.DeviceType);
 
-            public static readonly Variable<MusicPlayerState, bool?> Shuffled = PlayerStateHelper.Boolean("shuffle_enabled", s => s.ShuffleEnabled);
-            public static readonly Variable<MusicPlayerState, string?> RepeatMode = PlayerStateHelper.Text("repeat_mode", s => s.RepeatMode.ToString().ToLowerInvariant());
-            public static readonly Variable<MusicPlayerState, bool?> Connected = PlayerStateHelper.Boolean("is_connected", s => s.IsConnected);
+            public static readonly Variable<MusicPlayerState, bool?> Shuffled = PlayerStateHelper.Boolean("shuffle-enabled", s => s.ShuffleEnabled);
+            public static readonly Variable<MusicPlayerState, string?> RepeatMode = PlayerStateHelper.Text("repeat-mode", s => s.RepeatMode.ToString().ToLowerInvariant());
+            public static readonly Variable<MusicPlayerState, bool?> Connected = PlayerStateHelper.Boolean("is-connected", s => s.IsConnected);
             public static readonly Variable<Player, int?> Rating = PlayerDataHelper.Numeric("rating", s => s.activeItem.columns?.rating);
             public static readonly Variable<Player, string?> Playlist = PlayerDataHelper.Text("playlist", s => s.activeItem.playlistId);
-            public static readonly Variable<PlayQueueItem[], int?> PlayQueueSize = VariableHelper<PlayQueueItem[]>.Numeric("playqueue_size", s => s.Length);
+            public static readonly Variable<PlayQueueItem[], int?> PlayQueueSize = VariableHelper<PlayQueueItem[]>.Numeric("playqueue-size", s => s.Length);
 
 
             private static readonly Dictionary<string, IVariable> ByKey =
@@ -153,25 +153,18 @@ namespace MacroDeck.BeefWeb
                     return default;
                 return variable;
             }
-            internal static IReadOnlyList<ProvidedVariable> Declare(string key) => [.. ByKey.Select(item => CreateVariable(key, item.Value))];
+            internal static IReadOnlyList<VariableDefinition> Declare(string key) => [.. ByKey.Select(item => CreateVariable(key, item.Value))];
         }
 
-        public static IReadOnlyList<ProvidedVariable> Declare(string instanceKey) => Variables.Declare(prefix + instanceKey);
+        public static IReadOnlyList<VariableDefinition> Declare(string instanceKey) => Variables.Declare(prefix + instanceKey);
 
         public static TValue? TryGet<TData, TValue>(string key, TData data) => Variables.GetValueByKey<TData, TValue>(key, data);
-        public static object? TryGet<TData>(string key, TData data) => Variables.GetValueByKey<TData>(key, data);
+        public static VariableReading TryGet<TData>(string key, TData data) => VariableReading.Of(Variables.GetValueByKey<TData>(key, data));
         //public static TValue? TryGet<TValue>(string key, MusicPlayerState state) => TryGetBase<MusicPlayerState, TValue>(key, state);
         //public static object? TryGet(string key, MusicPlayerState state) => TryGetBase(key, state);
         //public static TValue? TryGet<TValue>(string key, Player player) => TryGetBase<Player, TValue>(key, player);
         //public static object? TryGet(string key, Player player) => TryGetBase(key, player);
         public static IVariable? TryGetVariable(string key) => GetVariableByKey(key);
-        private static ProvidedVariable CreateVariable(string prefix, IVariable variable) => 
-            new($"{prefix}_{variable.Key}",
-                variable.VariableType,
-                variable.DecimalPlaces,
-                variable.RefreshInterval is not null ? TimeSpan.FromSeconds(variable.RefreshInterval.Value) : null);
-
-            
-
+        private static VariableDefinition CreateVariable(string prefix, IVariable variable) => VariableDefinition.Eager($"{prefix}-{variable.Key}", variable.VariableType, variable.DecimalPlaces, variable.RefreshInterval is not null ? TimeSpan.FromSeconds(variable.RefreshInterval.Value) : null);
     }
 }

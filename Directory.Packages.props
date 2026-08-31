@@ -5,10 +5,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="MacroDeck.Plugin.Hosting" Version="3.0.0-preview.6" />
-    <PackageVersion Include="MacroDeck.Plugin.Serilog" Version="3.0.0-preview.6" />
+    <PackageVersion Include="MacroDeck.Plugin.Hosting" Version="3.0.0-preview.7" />
+    <PackageVersion Include="MacroDeck.Plugin.Serilog" Version="3.0.0-preview.7" />
     <PackageVersion Include="MacroDeck.Plugin.Testing" Version="3.0.0-preview.4" />
-    <PackageVersion Include="MacroDeck.Sdk" Version="3.0.0-preview.6" />
+    <PackageVersion Include="MacroDeck.Sdk" Version="3.0.0-preview.7" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
     <PackageVersion Include="NUnit" Version="4.3.2" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.7.0" />
