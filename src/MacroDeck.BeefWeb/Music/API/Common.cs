@@ -45,13 +45,14 @@ namespace MacroDeck.BeefWeb.Music.API
             JsonElement element = columns[index];
 
             string value = element.ToString();
+
             if (IsUnknown(value)) return null;
 
             if (int.TryParse(value, out int number)){
                 return number;
             }
-            throw new ArgumentException($"Value {columns[GetIndex()].GetType()} can not be converted to int");
+            throw new ArgumentException($"Value {columns[index].GetType()} can not be converted to int");
         }
-        private static bool IsUnknown(string value) => value == "?";
+        private static bool IsUnknown(string value) => value == "?" || value == "";
     }
 }

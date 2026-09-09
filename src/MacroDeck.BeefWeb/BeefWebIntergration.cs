@@ -5,6 +5,7 @@ using MacroDeck.BeefWeb.Music.API.Responses;
 using MacroDeck.Sdk;
 using MacroDeck.Sdk.Actions;
 using MacroDeck.Sdk.ConfigFlow;
+using MacroDeck.Sdk.Events;
 using MacroDeck.Sdk.MusicPlayer;
 using MacroDeck.Sdk.Variables;
 using static MacroDeck.BeefWeb.BeefWebVaribles.Variables;
@@ -13,7 +14,7 @@ using ILogger = Serilog.ILogger;
 
 namespace MacroDeck.BeefWeb;
 
-public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvider, IConfigFlowProvider, IVariableProvider
+public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvider, IConfigFlowProvider, IVariableProvider, IEventProvider
 {
 
     private const string PlayerID = "player";
@@ -27,8 +28,9 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
     {
         
         _logger = logger.ForContext<BeefWebIntergration>();
-        Player = new BeefWebPlayer();
+        Player = new BeefWebPlayer(this);
         Actions = new BeefWebActions(this, ResolvePlayer, GetInstances).Get();
+        Events = new BeefWebEvents(GetContext);
     }
 
     public const string IntegrationId = "app.macro-deck.beefweb";
@@ -39,9 +41,15 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
     public IReadOnlyList<IActionDefinition> Actions { get; }
 
     internal BeefWebPlayer Player { get; init; }
+    internal BeefWebEvents Events { get; init; }
     public static bool VariablesDependOnConfiguration => true;
 
     public IReadOnlyList<VariableDefinition> Variables => BeefWebVaribles.Declare(PlayerID);
+
+    public IReadOnlyList<EventDefinition> EventDefinitions => Events.GetEvents();
+
+    public Task<DynamicOptionsResult> GetEventOptionsAsync(EventOptionsContext context, CancellationToken cancellationToken)
+        => Task.FromResult(new DynamicOptionsResult { Options = InstanceOptions() });
 
     public async Task InitializeAsync(IIntegrationContext context)
     {
@@ -124,6 +132,8 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
     }
 
     public IConfigFlow CreateConfigFlow() => new BeefWebConfigFlow();
+
+    internal IIntegrationContext? GetContext() => _context;
 
     public async ValueTask<VariableReading> ReadAsync(string name, CancellationToken cancellationToken = default)
     {

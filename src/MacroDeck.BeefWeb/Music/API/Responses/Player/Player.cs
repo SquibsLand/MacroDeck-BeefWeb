@@ -139,6 +139,21 @@ namespace MacroDeck.BeefWeb.Music.API.Responses.Player
 
             }
         }
+
+        public bool IsDifferent(Player player)
+        {
+            return IsDifferent(player.activeItem.columns);
+        }
+        public bool IsDifferent(PlayerColumns? col) {
+            PlayerColumns? old = activeItem.columns;
+            if (old == null || col == null) return true;
+
+            return !(
+                old.title == col.title &&
+                old.artist == col.artist &&
+                old.album == col.album
+            );
+        }
     }
 
     internal class PlayerInfo

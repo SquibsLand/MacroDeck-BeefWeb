@@ -12,7 +12,7 @@ using System.Text;
 
 namespace MacroDeck.BeefWeb.Music
 {
-    internal sealed class BeefWebPlayer : IMusicPlayer, IMusicPlayerCatalogProvider
+    internal sealed class BeefWebPlayer(BeefWebIntergration intergration) : IMusicPlayer, IMusicPlayerCatalogProvider
     {
         private static readonly ILogger _logger =
         IntegrationLog.For<BeefWebPlayer>(BeefWebIntergration.IntegrationId);
@@ -20,7 +20,11 @@ namespace MacroDeck.BeefWeb.Music
         public MusicPlayerState LastState { get; private set; } = MusicPlayerState.Disconnected;
         public MusicPlayerState LastValidState { get; private set; } = MusicPlayerState.Disconnected;
         public PlayQueueItem[] LastPlayQueue { get; private set; } = [];
-        public Player? LastPlayer { get; private set;  } 
+        public Player? LastPlayer { get; private set;  }
+
+        private readonly BeefWebIntergration Intergration = intergration;
+
+
 
         public BeefWebClient? client { get; private set; }
 
@@ -66,6 +70,13 @@ namespace MacroDeck.BeefWeb.Music
                 return null;
             }
         }
+        private bool IsTrackChanged(Player newPlayer) => LastPlayer != null && newPlayer.IsDifferent(LastPlayer);
+
+        public void OnTrackChanges(Player player)
+        {
+            Intergration.Events.TrackChanged.Publish(player.activeItem);
+        }
+       
         public async Task<MusicPlayerState> GetStateAsync(CancellationToken cancellationToken = default)
         {
             MusicPlayerState state;
@@ -90,8 +101,8 @@ namespace MacroDeck.BeefWeb.Music
             if(client is null) return null;
             Player? player = await client.GetPlayer();
             if(player is null) return null;
-            LastPlayer = player;
-
+            if (IsTrackChanged(player)) OnTrackChanges(player);
+            LastPlayer = player;            
             if (getQueue)
             {
                 LastPlayQueue = await client.GetPlayQueue();
