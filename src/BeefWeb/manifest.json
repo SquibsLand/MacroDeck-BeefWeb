@@ -8,13 +8,13 @@
   "icon": "Assets/icon.svg",
   "entrypoints": {
     "win-x64": {
-      "executable": "bin/release/net10.0/win-x64/MacroDeck.BeefWeb.exe"
+      "executable": "runtimes/win-x64/MacroDeck.BeefWeb.exe"
     },
     "osx-arm64": {
-      "executable": "bin/release/net10.0/osx-arm64/MacroDeck.BeefWeb"
+      "executable": "runtimes/osx-arm64/MacroDeck.BeefWeb"
     },
     "linux-x64": {
-      "executable": "bin/release/net10.0/linux-x64/MacroDeck.BeefWeb"
+      "executable": "runtimes/linux-x64/MacroDeck.BeefWeb"
     }
   },
   "publisher": {

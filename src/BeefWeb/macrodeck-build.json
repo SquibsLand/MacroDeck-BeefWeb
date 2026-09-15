@@ -5,7 +5,7 @@
       "executable": "dotnet",
       "arguments": [
         "publish",
-        "MacroDeck.BeefWeb.csproj",
+        "BeefWeb.csproj",
         "-c",
         "Release",
         "-r",
@@ -21,7 +21,7 @@
       "executable": "dotnet",
       "arguments": [
         "publish",
-        "MacroDeck.BeefWeb.csproj",
+        "BeefWeb.csproj",
         "-c",
         "Release",
         "-r",
@@ -37,7 +37,7 @@
       "executable": "dotnet",
       "arguments": [
         "publish",
-        "MacroDeck.BeefWeb.csproj",
+        "BeefWeb.csproj",
         "-c",
         "Release",
         "-r",
