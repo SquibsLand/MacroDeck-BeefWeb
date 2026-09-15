@@ -60,7 +60,7 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
         // below - the same division of labor as SpotifyIntegration.ConnectFromConfig. The sample keeps
         // to a single entry: the location name typed into the config flow's one field.
         var entries = await context.Config.GetEntriesAsync();
-        _logger.Error($"{entries[0].Title}");
+ 
         if (entries.Count > 0)
         {
 
@@ -72,7 +72,7 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
             {
                 if (Enum.TryParse<PlayerType>(type, out PlayerType playerType))
                 {
-
+                    Player.init(address, int.Parse(portString), playerType);
                 }
                 else
                 {

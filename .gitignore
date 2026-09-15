@@ -156,3 +156,5 @@ publish
 .vs/
 
 src/MacroDeck.PluginTemplate/Properties/launchSettings.json
+
+src/MacroDeck.BeefWeb/.macrodeck-dev-state/com.squibs.beefweb/credentials.json

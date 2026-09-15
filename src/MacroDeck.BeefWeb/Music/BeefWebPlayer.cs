@@ -44,7 +44,6 @@ namespace MacroDeck.BeefWeb.Music
         };
         public async Task<MusicPlayerArtwork?> GetArtworkAsync(string artworkId, CancellationToken cancellationToken = default)
         {
-            _logger.Error("Getting Artwork");
             if (client is null)
             {
                 _logger.Warning("Client is not ready, skipping getting arwork");
@@ -80,11 +79,9 @@ namespace MacroDeck.BeefWeb.Music
         public async Task<MusicPlayerState> GetStateAsync(CancellationToken cancellationToken = default)
         {
             MusicPlayerState state;
-            _logger.Warning($"Client is {client != null}");
             if (client == null) state = IsUnavailable;
             else {
                 Player? player = await GetPlayer();
-                _logger.Warning($"Player is {player!= null}");
                 if (player == null) state = IsUnavailable;
                 else {
                     state = player.ToMusicPlayerState();

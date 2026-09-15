@@ -1,3 +1,4 @@
+using MacroDeck.BeefWeb.Music.API;
 using MacroDeck.Sdk.Actions;
 using MacroDeck.Sdk.ConfigFlow;
 
@@ -62,11 +63,11 @@ sealed class BeefWebConfigFlow : IConfigFlow
 			ActionParameter.Choice(PlayerTypeFieldName, 
 				options: [
 					new ActionParameterOption{
-						Value = "foobar2000",
+						Value = PlayerType.FOOBAR.ToString(),
 						Label = "Foobar2000"
 					},
 					new ActionParameterOption{
-					 Value = "deadbeef",
+					 Value = PlayerType.DEADBEEF.ToString(),
 					 Label = "DeaDBeeF"
 					}
 				],

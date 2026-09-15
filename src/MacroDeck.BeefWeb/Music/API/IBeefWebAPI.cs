@@ -60,7 +60,6 @@ namespace MacroDeck.BeefWeb.Music.API
 
             var content = await response.Content.ReadAsStringAsync();
 
-            _logger.Information(content);
 
             if (string.IsNullOrEmpty(content))
             {
