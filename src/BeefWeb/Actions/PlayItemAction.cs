@@ -1,10 +1,10 @@
-﻿using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
+﻿using BeefWeb.Music.API.Responses.Playlists;
 using MacroDeck.Sdk.Actions;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MacroDeck.BeefWeb.Actions
+namespace BeefWeb.Actions
 {
     internal class PlayItemExecutor(BeefWebIntergration integration) : BeefWebExecutor
     {

@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MacroDeck.BeefWeb.Music.API.Responses.Playlists
+namespace BeefWeb.Music.API.Responses.Playlists
 {
     internal class PlaylistItemsArgs
     {

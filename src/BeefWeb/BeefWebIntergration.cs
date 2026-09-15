@@ -1,18 +1,18 @@
-using MacroDeck.BeefWeb.ConfigFlow;
-using MacroDeck.BeefWeb.Music;
-using MacroDeck.BeefWeb.Music.API;
-using MacroDeck.BeefWeb.Music.API.Responses;
+using BeefWeb.ConfigFlow;
+using BeefWeb.Music;
+using BeefWeb.Music.API;
+using BeefWeb.Music.API.Responses;
 using MacroDeck.Sdk;
 using MacroDeck.Sdk.Actions;
 using MacroDeck.Sdk.ConfigFlow;
 using MacroDeck.Sdk.Events;
 using MacroDeck.Sdk.MusicPlayer;
 using MacroDeck.Sdk.Variables;
-using static MacroDeck.BeefWeb.BeefWebVaribles.Variables;
-using ApiPlayer = MacroDeck.BeefWeb.Music.API.Responses.Player.Player;
+using static BeefWeb.BeefWebVaribles.Variables;
+using ApiPlayer = BeefWeb.Music.API.Responses.Player.Player;
 using ILogger = Serilog.ILogger;
 
-namespace MacroDeck.BeefWeb;
+namespace BeefWeb;
 
 public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvider, IConfigFlowProvider, IVariableProvider, IEventProvider
 {

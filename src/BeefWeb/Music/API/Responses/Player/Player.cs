@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace MacroDeck.BeefWeb.Music.API.Responses.Player
+namespace BeefWeb.Music.API.Responses.Player
 {
     enum VolumeType { db, linear, upDown }
     enum LocalPlaybackState { stopped, playing, paused }

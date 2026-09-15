@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MacroDeck.BeefWeb.Actions
+namespace BeefWeb.Actions
 {
     sealed internal class VolumeExecutor(BeefWebIntergration intergration) : BeefWebExecutor
     {

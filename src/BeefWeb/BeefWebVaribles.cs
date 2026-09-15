@@ -1,15 +1,15 @@
-using MacroDeck.BeefWeb.Music;
-using MacroDeck.BeefWeb.Music.API.Responses;
-using MacroDeck.BeefWeb.Music.API.Responses.Player;
+using BeefWeb.Music;
+using BeefWeb.Music.API.Responses;
+using BeefWeb.Music.API.Responses.Player;
 using MacroDeck.Sdk.MusicPlayer;
 using MacroDeck.Sdk.Variables;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using static MacroDeck.BeefWeb.BeefWebVaribles.Variables;
+using static BeefWeb.BeefWebVaribles.Variables;
 
-namespace MacroDeck.BeefWeb
+namespace BeefWeb
 {
     
     internal static class BeefWebVaribles

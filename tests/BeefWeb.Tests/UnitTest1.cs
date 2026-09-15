@@ -1,4 +1,4 @@
-﻿namespace MacroDeck.BeefWeb.Tests;
+﻿namespace BeefWeb.Tests;
 
 public class Tests
 {

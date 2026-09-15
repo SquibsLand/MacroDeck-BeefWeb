@@ -1,12 +1,12 @@
-﻿using MacroDeck.BeefWeb.Music.API.Responses.Player;
-using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
+﻿using BeefWeb.Music.API.Responses.Player;
+using BeefWeb.Music.API.Responses.Playlists;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MacroDeck.BeefWeb.Music.API.Responses
+namespace BeefWeb.Music.API.Responses
 {
     internal class PlayQueueRoot : BeefWebAPICall<PlayQueueRoot, PlayQueueItem[]>, IApiResource<PlayQueueItem[]>
     {

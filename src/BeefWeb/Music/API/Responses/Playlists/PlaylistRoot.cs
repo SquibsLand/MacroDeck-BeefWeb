@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace MacroDeck.BeefWeb.Music.API.Responses.Playlists
+namespace BeefWeb.Music.API.Responses.Playlists
 {
     internal class PlaylistRoot : BeefWebAPICall<PlaylistRoot>, IApiResource<PlaylistRoot>
     {

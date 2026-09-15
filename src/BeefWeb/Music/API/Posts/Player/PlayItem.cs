@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace MacroDeck.BeefWeb.Music.API.Posts.Player
+namespace BeefWeb.Music.API.Posts.Player
 {
     internal class PlayItemParams
     {

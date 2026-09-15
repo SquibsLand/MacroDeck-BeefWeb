@@ -1,4 +1,4 @@
-﻿using MacroDeck.BeefWeb.Music.API.Responses.Player;
+﻿using BeefWeb.Music.API.Responses.Player;
 using MacroDeck.Sdk;
 using MacroDeck.Sdk.Actions;
 using Microsoft.VisualBasic;
@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MacroDeck.BeefWeb.Events
+namespace BeefWeb.Events
 {
     internal class TrackChangedEvent : BeefWebEvent<ActiveItem>
     {

@@ -1,6 +1,6 @@
-﻿using MacroDeck.BeefWeb.Actions;
-using MacroDeck.BeefWeb.Music;
-using MacroDeck.BeefWeb.Music.API.Posts.Player;
+﻿using BeefWeb.Actions;
+using BeefWeb.Music;
+using BeefWeb.Music.API.Posts.Player;
 using MacroDeck.Sdk;
 using MacroDeck.Sdk.Actions;
 using MacroDeck.Sdk.MusicPlayer;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace MacroDeck.BeefWeb
+namespace BeefWeb
 {
     internal class BeefWebActions(BeefWebIntergration intergration, MusicPlayerResolver resolver, Func<IReadOnlyList<MusicPlayerInstance>> getInstances)
  

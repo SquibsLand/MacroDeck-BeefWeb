@@ -1,8 +1,9 @@
-using MacroDeck.BeefWeb.Music.API;
+using BeefWeb.Music.API;
 using MacroDeck.Sdk.Actions;
 using MacroDeck.Sdk.ConfigFlow;
+using MacroDeck.Localization;
 
-namespace MacroDeck.BeefWeb.ConfigFlow;
+namespace BeefWeb.ConfigFlow;
 
 sealed class BeefWebConfigFlow : IConfigFlow
 {
@@ -33,13 +34,13 @@ sealed class BeefWebConfigFlow : IConfigFlow
 		{
 			return Task.FromResult(ConfigFlowResult.Error(BuildStep(),
 				"Enter a server address.",
-				new Dictionary<string, Localization.LocalizedText> { [ServerFieldName] = "Required." }));
+				new Dictionary<string, LocalizedText> { [ServerFieldName] = "Required." }));
 		}
         if (input.GetValueOrDefault(PlayerTypeFieldName) is not string { Length: > 0 } type)
         {
             return Task.FromResult(ConfigFlowResult.Error(BuildStep(),
                 "Enter a player name.",
-                new Dictionary<string, Localization.LocalizedText> { [PlayerTypeFieldName] = "Required." }));
+                new Dictionary<string, LocalizedText> { [PlayerTypeFieldName] = "Required." }));
         }
 
         return Task.FromResult(ConfigFlowResult.Complete($"{type} ({server})"));

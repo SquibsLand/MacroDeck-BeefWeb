@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace MacroDeck.BeefWeb.Actions
+namespace BeefWeb.Actions
 {
     // TODO: Currently this only does logic for all keys having the same value, this should be changed.
     public abstract class BeefWebExecutor : IActionExecutor

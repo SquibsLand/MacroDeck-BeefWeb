@@ -1,4 +1,4 @@
-﻿using MacroDeck.BeefWeb.Music.API.Responses.Player;
+﻿using BeefWeb.Music.API.Responses.Player;
 using MacroDeck.Sdk.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SignalR;
@@ -17,7 +17,7 @@ using System.Text.Json;
 using System.Web;
 using ILogger = Serilog.ILogger;
 
-namespace MacroDeck.BeefWeb.Music.API
+namespace BeefWeb.Music.API
 {
     
     public sealed class EmptyClass { }

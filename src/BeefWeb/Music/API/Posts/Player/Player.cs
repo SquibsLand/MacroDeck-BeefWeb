@@ -7,9 +7,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using static MacroDeck.BeefWeb.Music.API.Responses.Player.Player;
+using static BeefWeb.Music.API.Responses.Player.Player;
 
-namespace MacroDeck.BeefWeb.Music.API.Posts.Player
+namespace BeefWeb.Music.API.Posts.Player
 {
     internal class PlayerRequestOption
     {

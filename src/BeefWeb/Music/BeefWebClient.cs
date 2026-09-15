@@ -1,8 +1,8 @@
-﻿using MacroDeck.BeefWeb.Music.API;
-using MacroDeck.BeefWeb.Music.API.Posts.Player;
-using MacroDeck.BeefWeb.Music.API.Responses.Player;
-using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
-using ApiPlayItem = MacroDeck.BeefWeb.Music.API.Posts.Player.PlayItem;
+﻿using BeefWeb.Music.API;
+using BeefWeb.Music.API.Posts.Player;
+using BeefWeb.Music.API.Responses.Player;
+using BeefWeb.Music.API.Responses.Playlists;
+using ApiPlayItem = BeefWeb.Music.API.Posts.Player.PlayItem;
 using MacroDeck.Sdk.MusicPlayer;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,10 +11,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
-using MacroDeck.BeefWeb.Music.API.Responses;
+using BeefWeb.Music.API.Responses;
 
 
-namespace MacroDeck.BeefWeb.Music
+namespace BeefWeb.Music
 {
     internal class BeefWebClient : IBeefWebAPI
     {

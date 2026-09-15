@@ -1,6 +1,6 @@
-﻿using MacroDeck.BeefWeb;
-using MacroDeck.BeefWeb.Actions;
-using MacroDeck.BeefWeb.Music;
+﻿using BeefWeb;
+using BeefWeb.Actions;
+using BeefWeb.Music;
 using MacroDeck.Sdk.Actions;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 
 
 
-namespace MacroDeck.BeefWeb.Actions
+namespace BeefWeb.Actions
 {
     internal sealed class SeekExecutor(BeefWebIntergration integration) : BeefWebExecutor
     {

@@ -1,7 +1,7 @@
-using MacroDeck.BeefWeb.Music.API;
-using MacroDeck.BeefWeb.Music.API.Responses;
-using MacroDeck.BeefWeb.Music.API.Responses.Player;
-using MacroDeck.BeefWeb.Music.API.Responses.Playlists;
+using BeefWeb.Music.API;
+using BeefWeb.Music.API.Responses;
+using BeefWeb.Music.API.Responses.Player;
+using BeefWeb.Music.API.Responses.Playlists;
 using MacroDeck.Sdk.Logging;
 using MacroDeck.Sdk.MusicPlayer;
 using Serilog;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace MacroDeck.BeefWeb.Music
+namespace BeefWeb.Music
 {
     internal sealed class BeefWebPlayer(BeefWebIntergration intergration) : IMusicPlayer, IMusicPlayerCatalogProvider
     {

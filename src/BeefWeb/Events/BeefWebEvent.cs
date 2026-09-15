@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MacroDeck.BeefWeb.Events
+namespace BeefWeb.Events
 {
     internal abstract class BeefWebEvent<T>
     {

@@ -1,4 +1,4 @@
-using MacroDeck.BeefWeb;
+using BeefWeb;
 using MacroDeck.Plugin.Hosting;
 using MacroDeck.Plugin.Hosting.DependencyInjection;
 using MacroDeck.Plugin.Serilog;
