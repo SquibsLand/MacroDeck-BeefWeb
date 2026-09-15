@@ -6,9 +6,9 @@
     <File Path="TODO.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/MacroDeck.BeefWeb/MacroDeck.BeefWeb.csproj" />
+    <Project Path="src/BeefWeb/BeefWeb.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/MacroDeck.BeefWeb.Tests/MacroDeck.BeefWeb.Tests.csproj" />
+    <Project Path="tests/BeefWeb.Tests/BeefWeb.Tests.csproj" />
   </Folder>
 </Solution>
