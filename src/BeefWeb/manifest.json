@@ -1,7 +1,7 @@
 {
   "$schema": "https://schemas.macro-deck.app/plugin-manifest-v1.schema.json",
   "manifestVersion": 1,
-  "id": "com.squibs.beefweb",
+  "id": "com.squibsland.beefweb",
   "name": "BeefWeb",
   "version": "0.0.1",
   "description": "Connect MacroDeck with your Foobar2000 or DeaDBeeF music player",
@@ -19,7 +19,7 @@
   },
   "publisher": {
     "name": "Squibs",
-    "id": "com.squibs",
+    "id": "com.squibsland",
     "url": "https://www.twitch.tv/squibsland/"
   },
   "license": "MIT",
