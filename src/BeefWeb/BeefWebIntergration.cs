@@ -33,7 +33,7 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
         Events = new BeefWebEvents(GetContext);
     }
 
-    public const string IntegrationId = "app.macro-deck.beefweb";
+    public const string IntegrationId = "com.squibsland.beefweb";
 
     public bool IsInitialized { get; private set; }
     internal IReadOnlyList<ActionParameterOption> InstanceOptions() => [.. GetInstances().Select(instance => new ActionParameterOption { Value = instance.Id, Label = instance.DisplayName })];
