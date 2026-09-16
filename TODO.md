@@ -1,5 +1,9 @@
 # MacroDeck BeefWeb TODO
 
+## General
+- [ ] Add String Localization
+
+
 ## Player (10/12)
 Extension of IMusicPlayer
 - [X] GetArtworkAsync 

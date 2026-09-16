@@ -1,23 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<NoWarn>$(NoWarn);CA1707</NoWarn>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="coverlet.collector"/>
-        <PackageReference Include="MacroDeck.Plugin.Hosting" />
-        <PackageReference Include="MacroDeck.Plugin.Serilog" />
-        <PackageReference Include="MacroDeck.Plugin.Testing" />
-        <PackageReference Include="MacroDeck.Sdk" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-        <PackageReference Include="NUnit"/>
-        <PackageReference Include="NUnit.Analyzers"/>
-        <PackageReference Include="NUnit3TestAdapter"/>
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MacroDeck.Plugin.Testing" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="NUnit" />
+		<PackageReference Include="NUnit.Analyzers" PrivateAssets="all" />
+		<PackageReference Include="NUnit3TestAdapter" />
+	</ItemGroup>
 
-    <ItemGroup>
-        <Using Include="NUnit.Framework"/>
-    </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\src\BeefWeb\BeefWeb.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -68,16 +68,16 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
             string? portString = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.PortFieldName);
             var type = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.PlayerTypeFieldName);
 
-            if (!string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(portString) && !string.IsNullOrWhiteSpace(type))
+            if (!string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(portString) && !string.IsNullOrWhiteSpace(type) && int.TryParse(portString, out int port))
             {
                 if (Enum.TryParse<PlayerType>(type, out PlayerType playerType))
                 {
-                    Player.init(address, int.Parse(portString), playerType);
+                    Player.init(address, port, playerType);
                 }
                 else
                 {
                     _logger.Error($"Uknown player type of {type}, defaulting to Foobar");
-                    Player.init(address, int.Parse(portString), PlayerType.FOOBAR);
+                    Player.init(address, port, PlayerType.FOOBAR);
                 }
             }
             else
@@ -138,16 +138,19 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
     public async ValueTask<VariableReading> ReadAsync(string name, CancellationToken cancellationToken = default)
     {
         string prefix = BeefWebVaribles.prefix;
-        string withoutPrefix = name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? name[prefix.Length..] : name;
+        string withoutPrefix = name ?? string.Empty;
+        if (withoutPrefix.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            withoutPrefix = withoutPrefix[prefix.Length..];
+       
         string variableName = withoutPrefix;
 
-        var keyPrefix = $"{PlayerID}_";
-        var remainder = withoutPrefix[keyPrefix.Length..];
-        variableName = remainder;
+        string keyPrefix = $"{PlayerID}-";
 
+        if (withoutPrefix.StartsWith(keyPrefix, StringComparison.OrdinalIgnoreCase)) 
+            variableName = withoutPrefix[keyPrefix.Length..];
 
         IVariable? variable = BeefWebVaribles.TryGetVariable(variableName);
-        if (variable is null) return default;
+        if (variable is null) return VariableReading.Unavailable;
         Type dataType = variable.DataType;
         return variable.DataType switch
         {
