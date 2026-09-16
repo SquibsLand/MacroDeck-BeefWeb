@@ -45,7 +45,7 @@ Extension of IMusicPlayer
 - [X] Rating
 
 ## Events (0/2)
-- [ ] Track Changed
+- [X] Track Changed
 - [ ] Playlist Changed
 
 ## Ideas

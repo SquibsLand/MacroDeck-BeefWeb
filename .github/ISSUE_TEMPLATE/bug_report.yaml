@@ -1,0 +1,63 @@
+name: Bug report
+description: Template for bug reports
+title: "[Bug]: "
+labels:
+    - bug
+assignees:
+    - SquibsLand
+body:
+    - type: textarea
+      id: description
+      attributes:
+          label: Describe the Bug
+          description: Explain what went wrong, and what was supposed to happen.
+      validations:
+          required: true
+    - type: textarea
+      id: reproduce
+      attributes:
+          label: How to Reproduce
+          description: Explain how to reproduce the issue that happened.
+    - type: dropdown
+      id: player
+      attributes:
+          label: Music Player
+          description: Please select the music player you are using.
+          options:
+              - Foobar2000
+              - DeaDBeeF
+      validations:
+          required: true
+    - type: input
+      id: md_version
+      attributes:
+          label: Macro Deck Version
+          description: What is the version of your Macro Deck Application?
+          placeholder: 3.0.0
+      validations:
+          required: true
+    - type: dropdown
+      id: operating_system
+      attributes:
+          label: OS
+          description: What is the operating system you are using?
+          options:
+              - Windows 10
+              - Windows 11
+              - Mac
+              - Linux
+              - Other
+      validations:
+          required: false
+    - type: textarea
+      id: additional
+      attributes:
+          label: Additional Information
+          description: >-
+              Any additional information you can provide such as screenshots, images
+              and logs.
+    - type: markdown
+      attributes:
+          value: >-
+              This template was generated with [Issue Forms
+              Creator](https://issue-forms-creator.netlify.app)
