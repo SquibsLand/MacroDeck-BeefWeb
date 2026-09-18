@@ -3,7 +3,7 @@
   "manifestVersion": 1,
   "id": "com.squibsland.beefweb",
   "name": "BeefWeb",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Connect MacroDeck with your Foobar2000 or DeaDBeeF music player",
   "icon": "Assets/icon.svg",
   "entrypoints": {
