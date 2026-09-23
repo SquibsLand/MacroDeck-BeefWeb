@@ -10,7 +10,6 @@
         "Release",
         "-r",
         "win-x64",
-        "--self-contained",
         "true",
         "-o",
         "bin/publish/win-x64"
@@ -26,7 +25,6 @@
         "Release",
         "-r",
         "osx-arm64",
-        "--self-contained",
         "true",
         "-o",
         "bin/publish/osx-arm64"
@@ -42,7 +40,6 @@
         "Release",
         "-r",
         "linux-x64",
-        "--self-contained",
         "true",
         "-o",
         "bin/publish/linux-x64"
