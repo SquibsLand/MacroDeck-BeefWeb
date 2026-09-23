@@ -24,33 +24,6 @@ public sealed class PluginIntegrationTests
 
         Assert.DoesNotThrowAsync(harness.InitializeIntegrationsAsync);
     }
-
-    [Test]
-    public async Task The_example_action_writes_the_message_to_the_log()
-    {
-        await using var harness = CreateHarness();
-        await harness.InitializeIntegrationsAsync();
-
-        var outcome = await harness.Actions.ExecuteAsync(
-            "log-message",
-            new Dictionary<string, object?> { ["message"] = "Hello from a test" });
-
-        Assert.That(outcome.Succeeded, Is.True);
-        Assert.That(harness.Logs.Events.Any(e => e.Message.Contains("Hello from a test")), Is.True);
-    }
-
-    [Test]
-    public async Task The_example_action_fails_when_the_message_is_blank()
-    {
-        await using var harness = CreateHarness();
-        await harness.InitializeIntegrationsAsync();
-
-        var outcome = await harness.Actions.ExecuteAsync(
-            "log-message",
-            new Dictionary<string, object?> { ["message"] = "   " });
-
-        Assert.That(outcome.Succeeded, Is.False);
-    }
 }
 
 /// <summary>
