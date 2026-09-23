@@ -8,13 +8,25 @@
   "icon": "Assets/icon.svg",
   "entrypoints": {
     "win-x64": {
-      "executable": "runtimes/win-x64/BeefWeb.exe"
+      "executable": "runtimes/win-x64/BeefWeb.dll",
+      "runtime": {
+        "kind": "FrameworkDependent",
+        "dotnetVersion": "10.0"
+      }
     },
     "osx-arm64": {
-      "executable": "runtimes/osx-arm64/BeefWeb"
+      "executable": "runtimes/osx-arm64/BeefWeb.dll",
+      "runtime": {
+        "kind": "FrameworkDependent",
+        "dotnetVersion": "10.0"
+      }
     },
     "linux-x64": {
-      "executable": "runtimes/linux-x64/BeefWeb"
+      "executable": "runtimes/linux-x64/BeefWeb.dll",
+      "runtime": {
+        "kind": "FrameworkDependent",
+        "dotnetVersion": "10.0"
+      }
     }
   },
   "publisher": {
