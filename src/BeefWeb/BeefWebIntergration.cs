@@ -53,6 +53,7 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
 
     public async Task InitializeAsync(IIntegrationContext context)
     {
+        bool isAllStringsValid(params string?[] strings) => strings.All(value => !string.IsNullOrWhiteSpace(value));
 
         _context = context;
 
@@ -64,15 +65,20 @@ public sealed class BeefWebIntergration : IPluginIntegration, IMusicPlayerProvid
         if (entries.Count > 0)
         {
 
-            var address = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.ServerFieldName);
-            string? portString = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.PortFieldName);
-            var type = await context.Config.GetStringAsync(entries[0].Id, BeefWebConfigFlow.PlayerTypeFieldName);
+            Guid id = entries[0].Id;
+            string? address = await context.Config.GetStringAsync(id, BeefWebConfigFlow.ServerFieldName);
+            string? portString = await context.Config.GetStringAsync(id, BeefWebConfigFlow.PortFieldName);
+            string? type = await context.Config.GetStringAsync(id, BeefWebConfigFlow.PlayerTypeFieldName);
+            string? username = await context.Config.GetStringAsync(id, BeefWebConfigFlow.UsernameFieldName);
+            string? password = await context.Config.GetSecretAsync(id, BeefWebConfigFlow.PasswordFieldName);
 
-            if (!string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(portString) && !string.IsNullOrWhiteSpace(type) && int.TryParse(portString, out int port))
+            if (
+                isAllStringsValid(address, portString, type) &&
+                int.TryParse(portString, out int port))
             {
                 if (Enum.TryParse<PlayerType>(type, out PlayerType playerType))
                 {
-                    Player.init(address, port, playerType);
+                    Player.init(address, port, playerType, username, password);
                 }
                 else
                 {

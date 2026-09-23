@@ -75,10 +75,10 @@ sealed class BeefWebConfigFlow : IConfigFlow
 				label: "Player Type",
 				required: true
 				),
-			//ActionParameter.Text(UsernameFieldName,
-			//	label: "Username (Unused)"),
-			//ActionParameter.Password(PasswordFieldName, 
-			//	label:"Password (Unused)")
+			ActionParameter.Text(UsernameFieldName,
+				label: "Username"),
+			ActionParameter.Password(PasswordFieldName,
+				label:"Password")
 		]
 	};
 }

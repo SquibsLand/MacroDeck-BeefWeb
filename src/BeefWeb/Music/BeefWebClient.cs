@@ -16,6 +16,13 @@ using BeefWeb.Music.API.Responses;
 
 namespace BeefWeb.Music
 {
+    enum PasswordState
+    {
+        NONE,
+        VALID,
+        INVALID,
+        UNKNOWN,
+    }
     internal class BeefWebClient : IBeefWebAPI
     {
         public PlayerType PlayerType { get; }
@@ -25,6 +32,8 @@ namespace BeefWeb.Music
         public string? Password { get; }
 
         public BeefWebCommands Commands { get; }
+
+        public PasswordState PasswordState { get; } 
 
         private readonly HttpClient sharedClient;
         public BeefWebClient(
@@ -39,9 +48,39 @@ namespace BeefWeb.Music
             this.PlayerType = playerType;
             this.Username = username;
             this.Password = password;
-            this.sharedClient = new HttpClient{ BaseAddress = new Uri($"http://{ServerAddress}:{ServerPort}/api/") };
+            this.sharedClient = CreateSharedClient(this.ServerAddress, this.ServerPort, this.Username, this.Password, out PasswordState state);
+            this.PasswordState = state;
             this.Commands = new BeefWebCommands(this, this.sharedClient);
         }
+
+        public static HttpClient CreateSharedClient(string address, int port, string? username, string? password, out PasswordState state)
+        {
+            bool hasUsername = !string.IsNullOrEmpty(username);
+            bool hasPassword = !string.IsNullOrEmpty(password);
+
+            state = (
+                !string.IsNullOrWhiteSpace(username),
+                !string.IsNullOrWhiteSpace(password)
+            ) switch
+            {
+                (true, true) => PasswordState.UNKNOWN,
+                (true, false) => PasswordState.INVALID,
+                (false, true) => PasswordState.INVALID,
+                _ => PasswordState.NONE
+            };
+
+            HttpClient client = new() { BaseAddress = new($"http://{address}:{port}/api/") };
+
+            if(state == PasswordState.UNKNOWN)
+            {
+                string credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+                client.DefaultRequestHeaders.Authorization = new("Basic", credentials);
+            }
+
+            return client;
+
+        }
+       
         [Obsolete("This method is only kept for archiving, and has been replaced with GetArtworkDynamic")]
         public async Task<MusicPlayerArtwork?> GetArtwork()
         {
