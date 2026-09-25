@@ -33,7 +33,7 @@ namespace BeefWeb.Music.API.Posts.Player
     {
         public static string ApiPath => "player";
 
-        protected static async Task<TResponse?> Post(HttpClient client, PlayerRequest request) => await Post(client, JsonContent.Create(request));
+        protected static async Task<ApiResponse<TResponse?>> Post(HttpClient client, PlayerRequest request) => await Post(client, JsonContent.Create(request));
 
     }
     internal abstract class SetPlayer<TSelf> : SetPlayer<TSelf, EmptyClass>

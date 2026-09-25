@@ -192,7 +192,6 @@ namespace BeefWeb.Music.API.Responses.Player
         }
 
         public string GetArtworkUri() => $"artwork/{playlistId}/{index}";
-      
 
     }
 

@@ -1,17 +1,19 @@
 ﻿using BeefWeb.Music.API;
 using BeefWeb.Music.API.Posts.Player;
+using BeefWeb.Music.API.Responses;
 using BeefWeb.Music.API.Responses.Player;
 using BeefWeb.Music.API.Responses.Playlists;
-using ApiPlayItem = BeefWeb.Music.API.Posts.Player.PlayItem;
 using MacroDeck.Sdk.MusicPlayer;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using BeefWeb.Music.API.Responses;
+using ApiPlayItem = BeefWeb.Music.API.Posts.Player.PlayItem;
 
 
 namespace BeefWeb.Music
@@ -34,6 +36,11 @@ namespace BeefWeb.Music
         public BeefWebCommands Commands { get; }
 
         public PasswordState PasswordState { get; } 
+
+        public HttpStatusCode StatusCode { get; private set; }
+
+        public static SocketError? LastSocketError;
+        public static HttpStatusCode? LastStatusCode;
 
         private readonly HttpClient sharedClient;
         public BeefWebClient(
@@ -95,12 +102,13 @@ namespace BeefWeb.Music
         }
         public async Task<MusicPlayerArtwork?> GetDynamicArtwork() {
 
-            Player? player = await PlayerRoot.Fetch(sharedClient);
-            if (player is null) return default;
+            Player? player = (await PlayerRoot.Fetch(sharedClient)).Data;
+            if (player is null || player.playbackState == PlaybackState.Stopped) return default;
             return await GetDynamicArtwork(player.activeItem);
         }
         public async Task<MusicPlayerArtwork?> GetDynamicArtwork(ActiveItem item)
         {
+
             HttpResponseMessage response = await sharedClient.GetAsync(item.GetArtworkUri(), HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
@@ -110,9 +118,8 @@ namespace BeefWeb.Music
             return new(data, mimeType);
         }
 
-        
-
-        public async Task<Player?> GetPlayer() => await PlayerRoot.Fetch(sharedClient);
+       
+        public async Task<Player?> GetPlayer() => HandleResponse(await PlayerRoot.Fetch(sharedClient));
         public async Task<PlaylistItems?> GetPlaylistItems(string pid, string? range = null) {
             if(range is null)
             {
@@ -120,17 +127,23 @@ namespace BeefWeb.Music
                 if(item is null) return null;
                 range = $"0:{item.itemCount}";
             }
-            PlaylistItems? items = await PlaylistItemsRoot.Fetch(sharedClient, new PlaylistItemsArgs { PlaylistId = pid, Range = range });
+            PlaylistItems? items = HandleResponse(await PlaylistItemsRoot.Fetch(sharedClient, new PlaylistItemsArgs { PlaylistId = pid, Range = range }));
             if(items is PlaylistItems playlistItems)
             {
                 return items.WithPID(pid);
             }
             return null;
         }
-        public async Task<PlaylistRoot?> GetAllPlaylists() => await PlaylistRoot.Fetch(sharedClient);
-        public async Task<SinglePlaylist?> GetPlaylist(string pid) => await SinglePlaylist.Fetch(sharedClient, new SinglePlaylistArgs { PlaylistId=pid });
+        public async Task<PlaylistRoot?> GetAllPlaylists() => HandleResponse(await PlaylistRoot.Fetch(sharedClient));
+        public async Task<SinglePlaylist?> GetPlaylist(string pid) => HandleResponse(await SinglePlaylist.Fetch(sharedClient, new SinglePlaylistArgs { PlaylistId=pid }));
 
-        public async Task<PlayQueueItem[]> GetPlayQueue() => await PlayQueueRoot.Fetch(sharedClient) ?? [];
+        public async Task<PlayQueueItem[]> GetPlayQueue() => HandleResponse(await PlayQueueRoot.Fetch(sharedClient)) ?? [];
+
+        private TData? HandleResponse<TData>(ApiResponse<TData> response)
+        {
+            this.StatusCode = response.StatusCode;
+            return response.Data;
+        }
         internal class BeefWebCommands(BeefWebClient ctx, HttpClient client)
         {
             private readonly BeefWebClient _ctx = ctx;

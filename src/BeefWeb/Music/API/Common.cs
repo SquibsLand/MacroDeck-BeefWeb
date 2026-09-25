@@ -23,8 +23,11 @@ namespace BeefWeb.Music.API
         public Columns(List<JsonElement> columns)
         {
             ArgumentNullException.ThrowIfNull(columns);
-
-            if (columns.Count != TSelf.ColumnsQuery.Length)
+            if(columns.Count == 0)
+            {
+                this.columns = new();
+            }
+            else if (columns.Count != TSelf.ColumnsQuery.Length)
             {
                 throw new ArgumentException(
                     $"Expected {TSelf.ColumnsQuery.Length} columns, " +
@@ -38,20 +41,31 @@ namespace BeefWeb.Music.API
             return string.Join(",", TSelf.ColumnsQuery);
         }
 
-        protected string NextString(string fallback = "?") => columns[GetIndex()].GetString() ?? fallback;
+        protected string NextString(string fallback = "")
+        {
+            int index = GetIndex();
+            if (index < columns.Count) return columns[index].GetString() ?? fallback;
+            else return fallback;
+        }
         protected int? NextInt()
         {
             int index = GetIndex();
-            JsonElement element = columns[index];
+            if (index < columns.Count)
+            {
+                JsonElement element = columns[index];
 
-            string value = element.ToString();
+                string value = element.ToString();
 
-            if (IsUnknown(value)) return null;
+                if (IsUnknown(value)) return null;
 
-            if (int.TryParse(value, out int number)){
-                return number;
-            }
-            throw new ArgumentException($"Value {columns[index].GetType()} can not be converted to int");
+                if (int.TryParse(value, out int number))
+                {
+                    return number;
+                }
+               
+            } 
+            return null;
+
         }
         private static bool IsUnknown(string value) => value == "?" || value == "";
     }

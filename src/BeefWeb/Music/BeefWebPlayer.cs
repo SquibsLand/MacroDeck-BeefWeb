@@ -38,10 +38,11 @@ namespace BeefWeb.Music
             client = new BeefWebClient(serverAddress, serverPort, playerType, username, password);  
         }
 
-        private MusicPlayerState IsUnavailable = new()
+        private static readonly MusicPlayerState IsUnavailable = new()
         {
             IsUnavailable = true
         };
+
         public async Task<MusicPlayerArtwork?> GetArtworkAsync(string artworkId, CancellationToken cancellationToken = default)
         {
             if (client is null)
@@ -69,6 +70,7 @@ namespace BeefWeb.Music
                 return null;
             }
         }
+
         private bool IsTrackChanged(Player newPlayer) => LastPlayer != null && newPlayer.IsDifferent(LastPlayer);
 
         public void OnTrackChanges(Player player)
@@ -210,5 +212,6 @@ namespace BeefWeb.Music
         {
             throw new NotImplementedException();
         }
+
     }
 }

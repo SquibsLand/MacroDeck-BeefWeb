@@ -9,6 +9,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography.Xml;
@@ -19,7 +20,7 @@ using ILogger = Serilog.ILogger;
 
 namespace BeefWeb.Music.API
 {
-    
+
     public sealed class EmptyClass { }
     enum PlayerType
     {
@@ -35,6 +36,10 @@ namespace BeefWeb.Music.API
         string? Password { get; }
         Task<Player?> GetPlayer();
     }
+
+    public record ApiResponse<TData>(TData? Data, HttpStatusCode StatusCode) {
+        public bool IsSuccessStatusCode => StatusCode >= HttpStatusCode.OK;
+    }
     public interface IApiResource<TChild, TArgs>
     {
         static abstract string ApiPath { get; }
@@ -49,6 +54,50 @@ namespace BeefWeb.Music.API
         where TChild : class
         where TArgs : class
     {
+        private static bool IsNewSocketError(SocketError source, SocketError match) => source == match && BeefWebClient.LastSocketError != source;
+
+        protected static void RestoreConnection()
+        {
+            if (BeefWebClient.LastSocketError is not null)
+            {
+                _logger.Information("Connection to server restored");
+                BeefWebClient.LastSocketError = null;
+            }
+        }
+
+        protected static async Task<ApiResponse<TChild?>> HandleResponse(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                RestoreConnection();
+                TChild? data = await ParseResponse(response);
+                BeefWebClient.LastStatusCode = response.StatusCode;
+                return new(data, response.StatusCode);
+            }
+            else
+            {
+                return new(null, response.StatusCode);
+            }
+        }
+        protected static ApiResponse<TChild?> HandleError(HttpRequestException ex, bool alwaysNew = false)
+        {
+            if (ex.InnerException is SocketException socketException)
+            {
+                if (alwaysNew || IsNewSocketError(socketException.SocketErrorCode, SocketError.ConnectionRefused))
+                {
+                    _logger.Error("Server is not running or refused connection");
+                }
+                else if (socketException.SocketErrorCode != BeefWebClient.LastSocketError)
+                {
+                    _logger.Error($"Unexpected exception of {Enum.GetName(socketException.SocketErrorCode)}");
+                }
+
+                BeefWebClient.LastSocketError = socketException.SocketErrorCode;
+                BeefWebClient.LastStatusCode = null;
+            }
+            return new(default, HttpStatusCode.ServiceUnavailable);
+        }
+
         protected static readonly ILogger _logger =
            IntegrationLog.For<BeefWebPlayer>(BeefWebIntergration.IntegrationId);
 
@@ -89,18 +138,25 @@ namespace BeefWeb.Music.API
                 : apiPath;
         }
     }
+    
 
     internal abstract class BeefWebAPICall<TSelf, TChild, TArgs> : BeefWebAPIBase<TSelf, TChild, TArgs>
         where TSelf : BeefWebAPICall<TSelf, TChild, TArgs>, IApiResource<TChild, TArgs>
         where TChild : class
         where TArgs : class
     {
-        public static async Task<TChild?> Fetch(HttpClient client, TArgs args )
+        
+        public static async Task<ApiResponse<TChild?>> Fetch(HttpClient client, TArgs args)
         {
-            string relativeWithQuery = GetRelativeQuery(args);
-            using HttpResponseMessage response = await client.GetAsync(relativeWithQuery);
-
-            return await ParseResponse(response);
+            try
+            {
+                string relativeWithQuery = GetRelativeQuery(args);
+                using HttpResponseMessage response = await client.GetAsync(relativeWithQuery);
+                return await HandleResponse(response);
+            } catch (HttpRequestException ex)
+            {
+                return HandleError(ex);
+            }
 
         }
     }
@@ -112,7 +168,7 @@ namespace BeefWeb.Music.API
         where TChild : class
     {
         public static string BuildApiPath(EmptyClass args) => TSelf.ApiPath;
-        public static Task<TChild?> Fetch(HttpClient client) => Fetch(client, new EmptyClass());
+        public static Task<ApiResponse<TChild?>> Fetch(HttpClient client) => Fetch(client, new EmptyClass());
     }
     internal abstract class BeefWebAPISend<TSelf, TParams, TResponse, TArgs> : BeefWebAPIBase<TSelf, TResponse, TArgs>
         where TSelf : BeefWebAPISend<TSelf, TParams, TResponse, TArgs>, IApiResource<TResponse, TArgs>
@@ -122,11 +178,20 @@ namespace BeefWeb.Music.API
     {
 
         public static Dictionary<string, string?> Query => [];
-        public static async Task<TResponse?> Post(HttpClient client, TParams? postContent = null, TArgs? args = null)
+        public static async Task<ApiResponse<TResponse?>> Post(HttpClient client, TParams? postContent = null, TArgs? args = null)
         {
-            using HttpResponseMessage reponse = await client.PostAsync(GetRelativeQuery(args), postContent);
-            
-            return await ParseResponse(reponse);
+            try
+            {
+                string relativeWithQuery = GetRelativeQuery(args);
+
+                using HttpResponseMessage reponse = await client.PostAsync(relativeWithQuery, postContent);
+
+                return await HandleResponse(reponse);
+            }
+            catch (HttpRequestException ex)
+            {
+                return HandleError(ex, true);
+            }
 
         }
         public static string BuildApiPath(EmptyClass args) => TSelf.ApiPath;
