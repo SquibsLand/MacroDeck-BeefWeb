@@ -10,10 +10,9 @@ using System.Text;
 
 namespace BeefWeb.Actions
 {
-    internal sealed class SeekExecutor(BeefWebIntergration integration) : BeefWebExecutor
+    using static BeefWebCommonParams;
+    internal sealed class SeekExecutor(BeefWebIntergration Intergration) : BeefWebExecutor(Intergration)
     {
-        protected override BeefWebIntergration Intergration => integration;
-
         public override async Task<ActionResult> ExecuteAsync(ActionExecutionContext context)
         {
             if (IsValid(context, "seek-value", out double seconds))
@@ -30,7 +29,7 @@ namespace BeefWeb.Actions
         }
     }
 
-    internal class SeekRelativeAction(BeefWebIntergration _integration) : BaseBeefWebAction<SeekExecutor>(_integration)
+    internal class SeekRelativeAction(BeefWebIntergration Intergration) : BaseBeefWebAction<SeekExecutor>(Intergration)
     {
 
         public override string Id => "seek-relative";
@@ -41,13 +40,20 @@ namespace BeefWeb.Actions
 
         public override IReadOnlyList<ActionParameter> Parameters { get; } =
         [
-            ActionParameter.DynamicChoice("player", label: "Player", required: true), 
+            Player.Create(), 
             ActionParameter.Number("seek-value", "Seek (Seconds)", required: true, description: "Seek forward or backward by the set amount of seconds"),
         ];
 
-        protected override SeekExecutor CreateNewExecutor() => new(Integration);
+        protected override SeekExecutor CreateNewExecutor(BeefWebIntergration intergration) => new(intergration);
 
-        public override Task<DynamicOptionsResult> GetDynamicOptionsAsync(DynamicOptionsContext context, CancellationToken cancellationToken) => Task.FromResult(new DynamicOptionsResult { Options = Integration.InstanceOptions() });
+        public override Task<DynamicOptionsResult> GetDynamicOptionsAsync(DynamicOptionsContext context, CancellationToken cancellationToken) {
+            string param = context.ParameterName;
+            if (param.Contains(Player.Id))
+            {
+                return GetPlayerOptions();
+            }
+            throw UnhandledParam(param);
+        }
         
     }
     

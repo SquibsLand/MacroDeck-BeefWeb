@@ -6,18 +6,19 @@ using System.Text;
 
 namespace BeefWeb.Actions
 {
-    internal class PlayItemExecutor(BeefWebIntergration integration) : BeefWebExecutor
+    using static BeefWebCommonParams;
+    internal class PlayItemExecutor(BeefWebIntergration integration) : BeefWebExecutor(integration)
     {
-        protected override BeefWebIntergration Intergration => integration;
 
         public override async Task<ActionResult> ExecuteAsync(ActionExecutionContext context)
         {
-            if (IsValid(context, "playlist-id", out string? playlistId))
+            
+            if (IsValid(context, PlaylistId.Id, out string? playlistId))
             {
                 int trackIndex = 0;
                 string[] parts;
                 
-                if (IsValid(context, "track-item", out string? trackId))
+                if (IsValid(context, TrackItem.Id, out string? trackId))
                 {
                     if (!string.IsNullOrEmpty(trackId))
                     {
@@ -38,7 +39,7 @@ namespace BeefWeb.Actions
 
         }
     }
-    internal class PlayItemAction(BeefWebIntergration _integration) : BaseBeefWebAction<PlayItemExecutor>(_integration)
+    internal class PlayItemAction(BeefWebIntergration integration) : BaseBeefWebAction<PlayItemExecutor>(integration)
     {
         public override string Id => "play-item";
 
@@ -46,22 +47,22 @@ namespace BeefWeb.Actions
 
         public override string Description => "Play a selected song from a specific playlist";
 
-        public override IReadOnlyList<ActionParameter> Parameters => [ActionParameter.DynamicChoice("player", label: "Player", required: true),
-                ActionParameter.DynamicChoice("playlist-id", label: "Playlist", required: true),
-                ActionParameter.DynamicChoice("track-item",
-                                              label: "Song",
-                                              required: true)];
+        public override IReadOnlyList<ActionParameter> Parameters => [
+                Player.Create(),
+                PlaylistId.Create(),
+                TrackItem.Create()
+            ];
 
         public override async Task<DynamicOptionsResult> GetDynamicOptionsAsync(DynamicOptionsContext context, CancellationToken cancellationToken)
         {
             string param = context.ParameterName;
             if (param.Contains("playlist-id"))
             {
-                return new DynamicOptionsResult { Options = await Integration.GetPlaylistOptions() ?? [] };
+                return await GetPlaylistOptions();
             }
             else if (param.Contains("player"))
             {
-                return new DynamicOptionsResult { Options = Integration.InstanceOptions() };
+                return await GetPlayerOptions();
             }
             else if (param.Contains("track-item"))
             {
@@ -69,14 +70,14 @@ namespace BeefWeb.Actions
                 {
                     if (value2 is not null && value2 is string pid)
                     {
-                        return new DynamicOptionsResult { Options = await Integration.GetPlaylistItemsOptions(pid) ?? [] };
+                        return await GetPlaylistItemsOptions(pid);
                     }
                 }
 
             }
-            throw new InvalidDataException($"Dynamic paramater {param} does not have logic for options");
+            throw UnhandledParam(param);
         }
 
-        protected override PlayItemExecutor CreateNewExecutor() => new(_integration);
+        protected override PlayItemExecutor CreateNewExecutor(BeefWebIntergration intergration) => new(intergration);
     }
 }
