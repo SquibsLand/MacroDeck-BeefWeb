@@ -22,8 +22,7 @@ Extension of IMusicPlayer
 - [X] SetVolumeAsync
 - [X] TogglePlayPauseAsync
 
-## Custom Actions (3/6)
-- [ ] Refresh
+## Custom Actions (3/5)
 - [ ] Add to Playback Queue
 - [ ] Stop after next track
 - [X] Seek Relative
@@ -48,7 +47,7 @@ Extension of IMusicPlayer
 - [X] Play Queue Size
 - [X] Rating
 
-## Events (0/2)
+## Events (1/2)
 - [X] Track Changed
 - [ ] Playlist Changed
 
