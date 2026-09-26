@@ -22,8 +22,9 @@ Extension of IMusicPlayer
 - [X] SetVolumeAsync
 - [X] TogglePlayPauseAsync
 
-## Custom Actions (3/5)
-- [ ] Add to Playback Queue
+## Custom Actions (4/5)
+- [X] Add to Playback Queue
+	- Note: Due to limitations with the API, this will change the active playlist if queued item is from a different playlist. 
 - [ ] Stop after next track
 - [X] Seek Relative
 - [X] Volume Relative

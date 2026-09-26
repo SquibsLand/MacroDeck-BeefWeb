@@ -24,8 +24,8 @@ namespace BeefWeb
         }
 
         public IReadOnlyList<IActionDefinition> Common() => MusicPlayerActions.Common(resolver, getInstances);
-        public IReadOnlyList<IActionDefinition> Custom() => [new SeekRelativeAction(intergration), new SetVolumeRelativeAction(intergration), new SetActivePlaylistAction(intergration)];
-        internal IReadOnlyList<IActionDefinition> Debuging() => [new PlayItemAction(intergration)];
+        public IReadOnlyList<IActionDefinition> Custom() => [new SeekRelativeAction(intergration), new SetVolumeRelativeAction(intergration), new SetActivePlaylistAction(intergration), new PlayItemAction(intergration), new QueueItemAction(intergration)];
+        internal IReadOnlyList<IActionDefinition> Debuging() => [];
 
     }
 }

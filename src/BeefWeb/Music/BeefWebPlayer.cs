@@ -95,6 +95,12 @@ namespace BeefWeb.Music
 
         }
 
+        public async Task QueueItemAsync(string pid, int index, int queueIndex)
+        {
+            if (client is null) return;
+            await client.Commands.QueueItem(pid, index, queueIndex);
+        }
+
         private async Task<Player?> GetPlayer(bool getQueue = true)
         {
             if(client is null) return null;

@@ -1,5 +1,6 @@
 ﻿using BeefWeb.Music.API;
 using BeefWeb.Music.API.Posts.Player;
+using BeefWeb.Music.API.Posts.Playqueue;
 using BeefWeb.Music.API.Responses;
 using BeefWeb.Music.API.Responses.Player;
 using BeefWeb.Music.API.Responses.Playlists;
@@ -241,6 +242,11 @@ namespace BeefWeb.Music
             }
             public async Task PlayItem(string pid, int index) { 
                 await ApiPlayItem.Post(_client, args: new PlayItemParams { PlaylistId = pid , Index = index.ToString() });
+            }
+
+            public async Task QueueItem(string pid, int index, int position)
+            {
+                await PlayqueueAdd.Post(_client, new PlayqueueAddParams { plref = pid, itemIndex = index, queueIndex = position });
             }
         }
     }
