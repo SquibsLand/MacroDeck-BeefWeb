@@ -4,6 +4,9 @@
 ![GitHub Release](https://img.shields.io/github/v/release/squibsland/MacroDeck-BeefWeb?include_prereleases)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/squibsland/MacroDeck-BeefWeb)
 
+>[!WARNING]
+> This project is currently on hiatus. It is unknown when development will resume. 
+
 This plugin for [MacroDeck](https://macro-deck.app) allows for you to control your [Foobar2000](https://www.foobar2000.org) or [DeaDBeeF](https://deadbeef.sourceforge.io) music player! This plugin is possible using the [Beefweb API](https://github.com/hyperblast/beefweb) by [hyperblast](https://github.com/hyperblast). 
 
 ## Links
